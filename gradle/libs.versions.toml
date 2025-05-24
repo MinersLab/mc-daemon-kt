@@ -1,0 +1,23 @@
+[versions]
+kotlin = "2.1.20"
+adventure = "0ce836b719"
+kotlinx-serialization = "1.8.1"
+kotlinx-coroutines = "1.10.2"
+ktor = "3.1.3"
+logback = "1.5.13"
+shadow = "9.0.0-beta13"
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-plugin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+
+[libraries]
+adventure-parser = { group = "com.github.StarryDevs.adventure-kt", name = "parser", version.ref = "adventure" }
+adventure-brigadier = { group = "com.github.StarryDevs.adventure-kt", name = "brigadier", version.ref = "adventure" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json",version.ref = "kotlinx-serialization" }
+kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-hocon",version.ref = "kotlinx-serialization" }
+kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
