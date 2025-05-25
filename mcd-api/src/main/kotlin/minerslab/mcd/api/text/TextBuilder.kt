@@ -11,6 +11,7 @@ class TextBuilder : CharSequence {
     override fun get(index: Int) = text[index]
     override val length: Int
         get() = text.length
+
     override fun codePoints(): IntStream = text.codePoints()
     override fun isEmpty() = text.isEmpty()
     override fun toString() = text
@@ -48,3 +49,6 @@ class TextBuilder : CharSequence {
 }
 
 fun text() = TextBuilder()
+
+fun TextBuilder.asJsonText() = JsonText(this.toString())
+fun TextBuilder.asComponent() = asJsonText().asComponent()

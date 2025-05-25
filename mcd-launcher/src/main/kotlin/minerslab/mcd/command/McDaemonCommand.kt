@@ -6,7 +6,9 @@ import com.mojang.brigadier.arguments.StringArgumentType.word
 import kotlinx.serialization.json.Json
 import minerslab.mcd.McDaemonVersion
 import minerslab.mcd.api.command.ServerCommandDispatcher
+import minerslab.mcd.api.command.ServerRequirement
 import minerslab.mcd.api.command.feature
+import minerslab.mcd.api.command.or
 import minerslab.mcd.api.permission.McDaemonPermissionApi
 import minerslab.mcd.api.permission.instance
 import minerslab.mcd.api.permission.permission
@@ -36,14 +38,14 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                 )
             }
             literal("stop") {
-                requires(permission("command.$MC_DAEMON.mcd.stop"))
+                requires(permission("command.$MC_DAEMON.mcd.stop") or ServerRequirement)
                 run {
                     source.handler.command(source.handler.getCommandHelper().stop())
                 }
             }
             literal("perms") {
                 val perms = McDaemonPermissionApi.instance
-                requires(permission("command.$MC_DAEMON.mcd.perms"))
+                requires(permission("command.$MC_DAEMON.mcd.perms") or ServerRequirement)
                 literal("reload") {
                     run {
                         perms.configWrapper.reload()
@@ -102,7 +104,14 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                                 run {
                                     val name: String by argument()
                                     val permission: String by argument()
-                                    source.sendFeedback("[$name] $permission = ${perms.getGroupPermission(name, permission)}")
+                                    source.sendFeedback(
+                                        "[$name] $permission = ${
+                                            perms.getGroupPermission(
+                                                name,
+                                                permission
+                                            )
+                                        }"
+                                    )
                                 }
                             }
                         }
@@ -170,7 +179,14 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                                 run {
                                     val name: String by argument()
                                     val permission: String by argument()
-                                    source.sendFeedback("[$name] $permission = ${perms.getUserPermission(name, permission)}")
+                                    source.sendFeedback(
+                                        "[$name] $permission = ${
+                                            perms.getUserPermission(
+                                                name,
+                                                permission
+                                            )
+                                        }"
+                                    )
                                 }
                             }
                         }
@@ -187,7 +203,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                 }
             }
             literal("plugin") {
-                requires(permission("command.$MC_DAEMON.mcd.plugin"))
+                requires(permission("command.$MC_DAEMON.mcd.plugin") or ServerRequirement)
                 literal("disable") {
                     argument("id", StringArgumentType.greedyString()) {
                         run {
@@ -240,8 +256,9 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                             for ((file, meta) in source.daemon.pluginManager.scan()) {
                                 if (meta.id in source.daemon.pluginManager.plugins) continue
                                 val name = file.relativeTo(source.daemon.pluginManager.pluginsPath.toFile())
+                                val content = "${meta.id} ($name)"
                                 val text = JsonText(
-                                    text().gray().a("${meta.id} ($name)").toString(),
+                                    text().gray().a(content).toString(),
                                     clickEvent = JsonText.ClickEvent(
                                         JsonText.ClickEvent.Action.SUGGEST_COMMAND,
                                         command = "!!mcd plugin ${if (file.name.startsWith(DISABLED_PREFIX)) "enable" else "load"} $name"

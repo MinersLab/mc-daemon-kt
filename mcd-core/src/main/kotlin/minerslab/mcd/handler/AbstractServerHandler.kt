@@ -20,25 +20,25 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
 
     @Serializable
     open class AbstractServerConfig {
-        var commandLine = "cmd /c run.bat"
-        var inputCharset: String = Charsets.UTF_8.name
-        var outputCharset: String = Charsets.UTF_8.name
-        var rconCharset: String = Charsets.UTF_8.name
-        var rcon: RconConfig = RconConfig()
+        open var commandLine = "cmd /c run.bat"
+        open var inputCharset: String = Charsets.UTF_8.name
+        open var outputCharset: String = Charsets.UTF_8.name
+        open var rconCharset: String = Charsets.UTF_8.name
+        open var rcon: RconConfig = RconConfig()
 
         @Serializable
-        class RconConfig {
-            var enabled: Boolean = true
-            var port: Int = 25575
-            var password: String = "123456"
-            var host: String = "localhost"
+        open class RconConfig {
+            open var enabled: Boolean = true
+            open var port: Int = 25575
+            open var password: String = "123456"
+            open var host: String = "localhost"
         }
 
     }
 
     protected lateinit var serverProcess: Process
     private lateinit var config: T
-    protected lateinit var daemonThread: Thread
+    protected lateinit var outputThread: Thread
     protected lateinit var inputThread: Thread
     private lateinit var mcDaemon: McDaemon
     private var rcon: Rcon? = null
@@ -60,44 +60,44 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
             .redirectErrorStream(true)
             .start()
         inputThread = createInputThread()
-        daemonThread = createDaemonThread()
+        outputThread = createOutputThread()
         inputThread.start()
-        daemonThread.start()
+        outputThread.start()
         getProcess().onExit()
             .thenRun(mcDaemon::stop)
     }
 
     protected open fun createInputThread(writeLock: Any = Any()): Thread = Thread {
-        val buffer = ByteArray(1024)
-        try {
-            var bytesRead: Int
-            while (System.`in`.read(buffer).also { bytesRead = it } != -1 && getProcess().isAlive) {
-                synchronized(writeLock) {
-                    serverProcess.outputStream.write(buffer, 0, bytesRead)
-                    serverProcess.outputStream.flush()
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
+        while (true) {
+            val line = readlnOrNull() ?: break
             try {
-                serverProcess.outputStream.close()
-            } catch (e: IOException) { }
+                synchronized(writeLock) {
+                    tickInput(line)
+                }
+            } catch (e: IOException) {
+                logger.error("Failed to write to server process", e)
+                break
+            }
         }
     }
 
-    protected open fun createDaemonThread(): Thread = Thread {
+    protected open fun createOutputThread(): Thread = Thread {
         val process = getProcess()
         val reader = process.inputStream.bufferedReader(Charset.forName(config.outputCharset))
         while (process.isAlive) {
             val line = reader.readLine() ?: break
-            println(line)
-            tickLine(line)
+            println(line) // 重定向到控制台
+            tickOutput(line)
         }
         reader.close()
     }
 
-    open fun tickLine(line: String) {
+    open fun tickInput(line: String) {
+        serverProcess.outputStream.write((line + "\n").toByteArray(Charset.forName(config.inputCharset)))
+        serverProcess.outputStream.flush()
+    }
+
+    open fun tickOutput(line: String) {
         if (isServerMessage(line)) handleServerMessage(line)
         else if (isPlayerMessage(line)) handlePlayerMessage(line)
         else if (config.rcon.enabled && rcon == null && isRconStarted(line)) {
@@ -111,7 +111,9 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
         logger.info("Stopping")
         runCatching { rcon?.close() }
         inputThread.interrupt()
-        daemonThread.interrupt()
+        outputThread.interrupt()
+        inputThread.join(1000)
+        outputThread.join(1000)
         logger.info("Stopped")
     }
 

@@ -18,6 +18,14 @@ git-version = { id = "com.palantir.git-version", version.ref = "git-version" }
 
 [libraries]
 adventure-nbt = { module = "net.kyori:adventure-nbt", version.ref = "adventure" }
+adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
+adventure-extra-kotlin = { module = "net.kyori:adventure-extra-kotlin", version.ref = "adventure" }
+adventure-text-ansi = { module = "net.kyori:adventure-text-serializer-ansi", version.ref = "adventure" }
+adventure-text-json = { module = "net.kyori:adventure-text-serializer-json", version.ref = "adventure" }
+adventure-text-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
+adventure-text-legacy = { module = "net.kyori:adventure-text-serializer-legacy", version.ref = "adventure" }
+adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
+adventure-text-json-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 adventure-parser = { group = "com.github.StarryDevs.adventure-kt", name = "parser", version.ref = "adventure-kt" }
 adventure-brigadier = { group = "com.github.StarryDevs.adventure-kt", name = "brigadier", version.ref = "adventure-kt" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json",version.ref = "kotlinx-serialization" }

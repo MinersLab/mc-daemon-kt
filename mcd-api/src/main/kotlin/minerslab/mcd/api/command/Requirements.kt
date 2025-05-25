@@ -19,3 +19,5 @@ fun feature(name: String, defaultEnabled: Boolean = true): Requirement = {
 }
 
 operator fun Requirement.not(): Requirement = { !this@not.invoke(this) }
+infix fun Requirement.or(other: Requirement): Requirement = { this@or.invoke(this) || other.invoke(this) }
+infix fun Requirement.and(other: Requirement): Requirement = { this@and.invoke(this) || other.invoke(this) }

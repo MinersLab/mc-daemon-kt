@@ -21,7 +21,10 @@ class DeferredRegister<T>(val registry: Registry<T>) {
     }
 
     fun register(name: String, callback: () -> T) {
-        val identifier = identifierOf(name, defaultNamespace = PluginLoadingContext.getOrNull()?.pluginClassLoader?.meta?.id ?: MC_DAEMON)
+        val identifier = identifierOf(
+            name,
+            defaultNamespace = PluginLoadingContext.getOrNull()?.pluginClassLoader?.meta?.id ?: MC_DAEMON
+        )
         if (identifier in caches) throw IllegalStateException("Duplicate registry '$identifier' of registry '${registry.getRegistryKey()}'")
         caches[identifier] = callback
     }

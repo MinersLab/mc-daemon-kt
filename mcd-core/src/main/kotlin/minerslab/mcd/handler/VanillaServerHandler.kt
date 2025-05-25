@@ -20,7 +20,9 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerHandler.Ab
     }
 
     override fun isPlayerMessage(line: String) = line.matches(playerMessageRegex) || line.matches(playerSayMessageRegex)
-    override fun isServerMessage(line: String): Boolean = playerSayMessageRegex.matchEntire(line)?.groupValues?.getOrNull(1)?.trim() in serverNames
+    override fun isServerMessage(line: String): Boolean =
+        playerSayMessageRegex.matchEntire(line)?.groupValues?.getOrNull(1)?.trim() in serverNames
+
     override fun isRconStarted(line: String) = line.matches(rconStartedMessageRegex)
 
     override fun parseConsoleCommandFeedback(line: String): String {
@@ -52,6 +54,12 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerHandler.Ab
             .joinToString(separator = ":")
             .trim()
 
+    }
+
+    override fun tickInput(line: String) {
+        if (line.startsWith("!!")) {
+            eventBus.emit(ServerEvent.ServerMessageEvent(this, "Server", line))
+        } else super.tickInput(line)
     }
 
 }

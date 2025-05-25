@@ -34,7 +34,8 @@ class PluginManager(daemon: McDaemon) {
         val metaFile = runCatching {
             zip.getInputStream(zip.getEntry("plugin.conf"))
         }.getOrNull() ?: return null
-        val meta = Hocon.decodeFromConfig<PluginMeta>(ConfigFactory.parseString(metaFile.readAllBytes().decodeToString()))
+        val meta =
+            Hocon.decodeFromConfig<PluginMeta>(ConfigFactory.parseString(metaFile.readAllBytes().decodeToString()))
         zip.close()
         return meta
     }
@@ -72,7 +73,8 @@ class PluginManager(daemon: McDaemon) {
     fun load(plugin: PluginClassLoader) {
         if (plugin.status == PluginStatus.LOADED) return
         for (dependency in plugin.meta.dependencies) {
-            val plugin = getPluginByName(dependency.name) ?: throw IllegalStateException("Expected dependency '${dependency}', but found NOTHING")
+            val plugin = getPluginByName(dependency.name)
+                ?: throw IllegalStateException("Expected dependency '${dependency}', but found NOTHING")
             require(dependency.versionRange?.test(plugin.value.meta.version) != false) {
                 "Expected dependency '$dependency', but found ${plugin.value.meta.version}"
             }
@@ -86,7 +88,8 @@ class PluginManager(daemon: McDaemon) {
     fun construct(plugin: PluginClassLoader) {
         if (plugin.status != PluginStatus.IDLE) return
         for (dependency in plugin.meta.dependencies) {
-            val plugin = getPluginByName(dependency.name) ?: throw IllegalStateException("Expected dependency '${dependency}', but found NOTHING")
+            val plugin = getPluginByName(dependency.name)
+                ?: throw IllegalStateException("Expected dependency '${dependency}', but found NOTHING")
             require(dependency.versionRange?.test(plugin.value.meta.version) != false) {
                 "Expected dependency '$dependency', but found ${plugin.value.meta.version}"
             }
@@ -107,5 +110,8 @@ class PluginManager(daemon: McDaemon) {
 
     fun getPluginByFile(file: File) = plugins.entries.firstOrNull { it.value.file == file }
     fun getPluginByName(name: String) = plugins[name]?.file?.let { getPluginByFile(it) }
+
+    fun getPluginMeta(plugin: Plugin) = plugins.entries.firstOrNull { it.value.instance == plugin }
+        ?: throw IllegalStateException("Plugin not found: ${plugin::class.simpleName} ($plugin))")
 
 }

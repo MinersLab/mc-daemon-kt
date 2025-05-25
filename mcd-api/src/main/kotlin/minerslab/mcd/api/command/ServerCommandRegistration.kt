@@ -12,6 +12,7 @@ class ServerCommandRegistration(val pluginLoadingContext: PluginLoadingContext) 
             it.pluginListeners.filterIsInstance<ServerCommandRegistration>().firstOrNull()
                 ?: ServerCommandRegistration(it).also(it.pluginListeners::add)
         }
+
         fun get() = getOrNull()!!
     }
 

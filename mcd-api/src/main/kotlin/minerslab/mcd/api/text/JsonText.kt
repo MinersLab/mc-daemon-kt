@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.json.JSONComponentSerializer
 
 private val json = Json {
     explicitNulls = true
@@ -19,13 +21,24 @@ data class JsonText(
     val font: String? = null,
     val insertion: String? = null,
 
-    val bold: Boolean? = null, val italic: Boolean? = null, val underlined: Boolean? = null, val strikethrough: Boolean? = null, val obfuscated: Boolean? = null,
-    val translate: String? = null, val fallback: String? = null, val with: List<JsonText>? = null,
+    val bold: Boolean? = null,
+    val italic: Boolean? = null,
+    val underlined: Boolean? = null,
+    val strikethrough: Boolean? = null,
+    val obfuscated: Boolean? = null,
+    val translate: String? = null,
+    val fallback: String? = null,
+    val with: List<JsonText>? = null,
     val keybind: String? = null,
     val score: Score? = null,
     val separator: String? = null,
     val selector: String? = null,
-    val nbt: String? = null, val interpret: Boolean? = null, val source: String? = null, val block: String? = null, val entity: String? = null, val storage: String? = null,
+    val nbt: String? = null,
+    val interpret: Boolean? = null,
+    val source: String? = null,
+    val block: String? = null,
+    val entity: String? = null,
+    val storage: String? = null,
     @SerialName("click_event") val clickEvent: ClickEvent? = null,
     @SerialName("hover_event") val hoverEvent: HoverEvent? = null
 ) {
@@ -43,9 +56,14 @@ data class JsonText(
 
         @Serializable
         enum class Action {
-            @SerialName("show_entity") SHOW_ENTITY,
-            @SerialName("show_item") SHOW_ITEM,
-            @SerialName("show_text") SHOW_TEXT;
+            @SerialName("show_entity")
+            SHOW_ENTITY,
+
+            @SerialName("show_item")
+            SHOW_ITEM,
+
+            @SerialName("show_text")
+            SHOW_TEXT;
         }
 
     }
@@ -64,14 +82,29 @@ data class JsonText(
 
         @Serializable
         enum class Action {
-            @SerialName("change_page") CHANGE_PAGE,
-            @SerialName("copy_to_clipboard") COPY_TO_CLIPBOARD,
-            @SerialName("custom") CUSTOM,
-            @SerialName("open_file") OPEN_FILE,
-            @SerialName("open_url") OPEN_URL,
-            @SerialName("run_command") RUN_COMMAND,
-            @SerialName("show_dialog") SHOW_DIALOG,
-            @SerialName("suggest_command") SUGGEST_COMMAND;
+            @SerialName("change_page")
+            CHANGE_PAGE,
+
+            @SerialName("copy_to_clipboard")
+            COPY_TO_CLIPBOARD,
+
+            @SerialName("custom")
+            CUSTOM,
+
+            @SerialName("open_file")
+            OPEN_FILE,
+
+            @SerialName("open_url")
+            OPEN_URL,
+
+            @SerialName("run_command")
+            RUN_COMMAND,
+
+            @SerialName("show_dialog")
+            SHOW_DIALOG,
+
+            @SerialName("suggest_command")
+            SUGGEST_COMMAND;
         }
 
     }
@@ -79,8 +112,16 @@ data class JsonText(
     @Serializable
     data class Score(val name: String, val objective: String)
 
-    fun asString() = json.encodeToString(this)
-
 }
 
+fun JsonText.asComponent() = JSONComponentSerializer.json()
+    .deserialize(asString())
+
+fun List<JsonText>.asComponent() = JSONComponentSerializer.json()
+    .deserialize(asString())
+
+fun Component.asString() = JSONComponentSerializer.json()
+    .serialize(this)
+
+fun JsonText.asString() = json.encodeToString(this)
 fun List<JsonText>.asString() = json.encodeToString(this)

@@ -19,7 +19,8 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
     )
 
     fun createXaeroWaypoint(name: String, pos: Triple<Double, Double, Double>, dimension: Identifier): JsonText {
-        val command = "xaero-waypoint:$name's Location:S:${pos.first.toInt()}:${pos.second.toInt()}:${pos.third.toInt()}:6:false:0:Internal-${if (dimension.getNamespace() == MINECRAFT) dimension.getPath() else "dim-%${dimension.getNamespace()}$${dimension.getPath()}"}-waypoints"
+        val command =
+            "xaero-waypoint:$name's Location:S:${pos.first.toInt()}:${pos.second.toInt()}:${pos.third.toInt()}:6:false:0:Internal-${if (dimension.getNamespace() == MINECRAFT) dimension.getPath() else "dim-%${dimension.getNamespace()}$${dimension.getPath()}"}-waypoints"
         return JsonText(
             text().red().a("[+X]").toString(),
             clickEvent = JsonText.ClickEvent(
@@ -34,7 +35,8 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
     }
 
     fun createVoxelWaypoint(name: String, pos: Triple<Double, Double, Double>, dimension: Identifier): JsonText {
-        val command = "[name:$name's Location, x:${pos.first.toInt()}, y:${pos.second.toInt()}, z:${pos.third.toInt()}, dim:$dimension]"
+        val command =
+            "[name:$name's Location, x:${pos.first.toInt()}, y:${pos.second.toInt()}, z:${pos.third.toInt()}, dim:$dimension]"
         return JsonText(
             text().blue().a("[+V]").toString(),
             clickEvent = JsonText.ClickEvent(
@@ -60,7 +62,11 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
                     text().yellow().a(player.name)
                         .green().a(" @ ")
                         .gray().a(dimension.toString())
-                        .aqua().a(" [${decimalFormat.format(pos.first)} ${decimalFormat.format(pos.second)} ${decimalFormat.format(pos.third)}]")
+                        .aqua().a(
+                            " [${decimalFormat.format(pos.first)} ${decimalFormat.format(pos.second)} ${
+                                decimalFormat.format(pos.third)
+                            }]"
+                        )
                         .toString(),
                     clickEvent = JsonText.ClickEvent(
                         JsonText.ClickEvent.Action.SUGGEST_COMMAND,

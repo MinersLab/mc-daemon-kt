@@ -1,5 +1,5 @@
 import com.palantir.gradle.gitversion.VersionDetails
-import java.util.Date
+import java.util.*
 
 plugins {
     alias(libs.plugins.kotlin.jvm)

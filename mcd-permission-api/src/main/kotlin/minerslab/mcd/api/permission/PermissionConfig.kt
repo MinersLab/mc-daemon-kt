@@ -10,9 +10,15 @@ data class PermissionConfig(
 ) {
 
     @Serializable
-    data class Group(val extends: MutableList<String> = mutableListOf(), val permissions: MutableMap<String, JsonElement> = mutableMapOf())
+    data class Group(
+        val extends: MutableList<String> = mutableListOf(),
+        val permissions: MutableMap<String, JsonElement> = mutableMapOf()
+    )
 
     @Serializable
-    data class User(val groups: MutableSet<String> = mutableSetOf(), val permissions: MutableMap<String, JsonElement> = mutableMapOf())
+    data class User(
+        val groups: MutableSet<String> = mutableSetOf(),
+        val permissions: MutableMap<String, JsonElement> = mutableMapOf()
+    )
 
 }
