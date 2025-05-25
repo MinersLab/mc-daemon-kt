@@ -7,7 +7,6 @@ import kotlinx.serialization.json.Json
 import minerslab.mcd.McDaemonVersion
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.ServerRequirement
-import minerslab.mcd.api.command.feature
 import minerslab.mcd.api.command.or
 import minerslab.mcd.api.permission.McDaemonPermissionApi
 import minerslab.mcd.api.permission.instance
@@ -27,7 +26,6 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
 
     override fun accept(t: ServerCommandDispatcher) = t.register {
         literal("mcd") {
-            requires(feature("command.$MC_DAEMON.mcd"))
             run {
                 source.sendFeedback(
                     text().green().a("McDaemon-Kt")

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import minerslab.mcd.api.command.Commands.PREFIX
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.ServerRequirement
+import minerslab.mcd.api.command.and
 import minerslab.mcd.api.command.feature
 import minerslab.mcd.api.command.or
 import minerslab.mcd.api.permission.permission
@@ -16,8 +17,7 @@ object SudoCommand : Consumer<ServerCommandDispatcher> {
 
     override fun accept(t: ServerCommandDispatcher) = t.register {
         literal("sudo") {
-            requires(feature("command.$MC_DAEMON.sudo"))
-            requires(permission("command.$MC_DAEMON.sudo") or ServerRequirement)
+            requires(feature("command.$MC_DAEMON.sudo") and (permission("command.$MC_DAEMON.sudo") or ServerRequirement))
             argument("sender", StringArgumentType.string()) {
                 argument("command", StringArgumentType.greedyString()) {
                     execute {
