@@ -9,6 +9,6 @@ data class McDaemonConfig(
 ) {
 
     @Serializable
-    data class Server(val host: String = "localhost", val port: Int = 8080)
+    data class Server(val enabled: Boolean = true, val host: String = "localhost", val port: Int = 8080)
 
 }

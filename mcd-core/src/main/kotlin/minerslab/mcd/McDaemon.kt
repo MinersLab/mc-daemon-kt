@@ -86,7 +86,7 @@ class McDaemon(val args: Array<out String>, val path: Path) {
         pluginManager.construct()
         pluginManager.load()
         initHandler()
-        embeddedServer.start(true)
+        if (config.server.enabled) embeddedServer.start(true)
     }
 
     var isStopped = false
@@ -97,7 +97,7 @@ class McDaemon(val args: Array<out String>, val path: Path) {
         modules.forEach { runCatching { it.dispose() } }
         runCatching(handler::dispose)
         runCatching(pluginManager::dispose)
-        runCatching(embeddedServer::stop)
+        if (config.server.enabled) runCatching(embeddedServer::stop)
     }
 
 }
