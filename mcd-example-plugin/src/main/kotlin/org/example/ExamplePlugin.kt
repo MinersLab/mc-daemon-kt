@@ -1,9 +1,8 @@
 package org.example
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import kotlinx.serialization.json.Json
 import minerslab.mcd.api.command.ServerCommandRegistration
-import minerslab.mcd.api.sendCommand
+import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.plugin.Plugin
 import minerslab.mcd.plugin.PluginEvent
 import minerslab.mcd.plugin.PluginLoadingContext
@@ -29,7 +28,7 @@ object ExamplePlugin : Plugin {
                 argument("text", StringArgumentType.greedyString()) {
                     run {
                         val text: String by argument()
-                        source.sendCommand("tellraw @a ${Json.encodeToString(text)}")
+                        source.sendFeedback(text)
                     }
                 }
             }

@@ -46,8 +46,8 @@ class PluginManager(daemon: McDaemon) {
         val meta = extractMeta(file)
         add(file, meta!!)
         val loader = plugins[meta.id] ?: return
-        loader.construct()
-        loader.initialize()
+        construct(loader)
+        load(loader)
     }
 
     fun add(file: File, meta: PluginMeta) {
@@ -78,9 +78,9 @@ class PluginManager(daemon: McDaemon) {
             }
             load(plugin.value)
         }
-        PluginLoadingContext.current.set(plugin.pluginLoadingContext)
+        PluginLoadingContext.current = plugin.pluginLoadingContext
         plugin.initialize()
-        PluginLoadingContext.current.set(null)
+        PluginLoadingContext.current = null
     }
 
     fun construct(plugin: PluginClassLoader) {
@@ -92,9 +92,9 @@ class PluginManager(daemon: McDaemon) {
             }
             construct(plugin.value)
         }
-        PluginLoadingContext.current.set(plugin.pluginLoadingContext)
+        PluginLoadingContext.current = plugin.pluginLoadingContext
         plugin.construct()
-        PluginLoadingContext.current.set(null)
+        PluginLoadingContext.current = null
     }
 
     fun load() {

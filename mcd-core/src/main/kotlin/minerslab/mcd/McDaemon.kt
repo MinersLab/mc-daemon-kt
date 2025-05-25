@@ -25,24 +25,11 @@ typealias EmbeddedServerType = EmbeddedServer<NettyApplicationEngine, NettyAppli
 
 class McDaemon(val args: Array<out String>, val path: Path) {
 
-    companion object {
-        const val DEFAULT_ID = "mcd"
-    }
-
     init {
         currentMcDaemon = this
     }
 
     val eventBus = EventBus(this::class)
-
-    val embeddedServer: EmbeddedServerType = embeddedServer(Netty, configure = {
-        connectors.add(EngineConnectorBuilder().apply {
-            host = "localhost"
-            port = 8080
-        })
-    }) {
-        eventBus.emit(EmbeddedServerEvent.StartEvent(embeddedServer, this))
-    }
 
     @OptIn(ExperimentalSerializationApi::class)
     val config = (path / "config.conf").toFile().run {
@@ -51,6 +38,20 @@ class McDaemon(val args: Array<out String>, val path: Path) {
             writeBytes(McDaemon::class.java.getResourceAsStream("/templates/config.conf")!!.readAllBytes())
         }
         Hocon.decodeFromConfig<McDaemonConfig>(ConfigFactory.parseFile(this))
+    }
+
+    val embeddedServer: EmbeddedServerType = embeddedServer(
+        Netty,
+        configure = {
+            connectors.add(
+                EngineConnectorBuilder().apply {
+                    host = config.server.host
+                    port = config.server.port
+                }
+            )
+        }
+    ) {
+        eventBus.emit(EmbeddedServerEvent.StartEvent(embeddedServer, this))
     }
 
     val pluginManager = PluginManager(this)
@@ -77,7 +78,8 @@ class McDaemon(val args: Array<out String>, val path: Path) {
     }
 
     fun start() {
-        modules.forEach { it.start(this) }
+        isStopped = false
+        modules.forEach(McDaemonModule::start)
         pluginManager.scan().forEach {
             pluginManager.add(it.first, it.second)
         }
@@ -87,12 +89,31 @@ class McDaemon(val args: Array<out String>, val path: Path) {
         embeddedServer.start(true)
     }
 
+    var isStopped = false
+
     fun stop() {
-        modules.forEach { it.dispose(this) }
-        handler.dispose()
-        pluginManager.dispose()
-        embeddedServer.stop()
+        if (isStopped) return
+        isStopped = true
+        modules.forEach { runCatching { it.dispose() } }
+        runCatching(handler::dispose)
+        runCatching(pluginManager::dispose)
+        runCatching(embeddedServer::stop)
     }
+
+}
+
+object McDaemonVersion {
+
+    fun toMap() = meta.toMap().mapKeys { it.key.toString() }.mapValues { it.value.toString() }
+
+    private val meta = Properties().apply {
+        load(McDaemon::class.java.getResourceAsStream("/META-INF/mcd-core.properties"))
+    }
+
+    val version = meta["version"].toString()
+    val gitLastTag = meta["git-last-tag"].toString()
+    val gitBranch = meta["git-branch"].toString()
+    val gitHash = meta["git-hash"].toString()
 
 }
 

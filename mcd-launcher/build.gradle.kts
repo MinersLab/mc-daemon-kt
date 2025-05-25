@@ -26,7 +26,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     api(project(":mcd-api"))
-    api(project(":mcd-api-permission"))
+    api(project(":mcd-permission-api"))
     api(project(":mcd-core"))
 }
 

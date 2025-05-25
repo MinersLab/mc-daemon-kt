@@ -18,6 +18,7 @@ dependencies {
 
     api(project(":mcd-core"))
     api(libs.adventure.brigadier)
+    api(libs.adventure.nbt)
 }
 
 tasks.test {

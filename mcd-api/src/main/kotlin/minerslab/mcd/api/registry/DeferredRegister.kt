@@ -1,7 +1,7 @@
 package minerslab.mcd.api.registry
 
-import minerslab.mcd.McDaemon.Companion.DEFAULT_ID
 import minerslab.mcd.plugin.PluginLoadingContext
+import minerslab.mcd.util.Namespaces.MC_DAEMON
 import starry.adventure.core.event.EventBus
 import starry.adventure.core.registry.Identifier
 import starry.adventure.core.registry.Registry
@@ -21,7 +21,7 @@ class DeferredRegister<T>(val registry: Registry<T>) {
     }
 
     fun register(name: String, callback: () -> T) {
-        val identifier = identifierOf(name, defaultNamespace = PluginLoadingContext.getOrNull()?.pluginClassLoader?.meta?.id ?: DEFAULT_ID)
+        val identifier = identifierOf(name, defaultNamespace = PluginLoadingContext.getOrNull()?.pluginClassLoader?.meta?.id ?: MC_DAEMON)
         if (identifier in caches) throw IllegalStateException("Duplicate registry '$identifier' of registry '${registry.getRegistryKey()}'")
         caches[identifier] = callback
     }

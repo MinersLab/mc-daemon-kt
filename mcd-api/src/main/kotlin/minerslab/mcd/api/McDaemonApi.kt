@@ -1,34 +1,36 @@
 package minerslab.mcd.api
 
-import minerslab.mcd.McDaemon
 import minerslab.mcd.api.command.Commands
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.ServerCommandSource
+import minerslab.mcd.api.config.FeatureConfig
+import minerslab.mcd.api.config.useConfig
 import minerslab.mcd.event.ServerEvent
 import minerslab.mcd.findModule
 import minerslab.mcd.handler.ServerHandler
+import minerslab.mcd.mcDaemon
+import minerslab.mcd.util.Namespaces.MC_DAEMON
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import starry.adventure.core.event.WrappedEvent
+import starry.adventure.core.registry.Identifiers.div
 
 class McDaemonApi : McDaemonModule {
 
-    init {
-        Commands.reloadDispatcher(ServerCommandDispatcher())
-    }
+    companion object
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
-    lateinit var daemon: McDaemon
 
-    override fun start(daemon: McDaemon) {
-        this.daemon = daemon
-        daemon.handler.eventBus.on(::onServerMessage)
-        daemon.handler.eventBus.on(::onPlayerMessage)
+    val featureConfig by useConfig<FeatureConfig>(MC_DAEMON / "features.json")
+
+    override fun start() {
+        Commands.reloadDispatcher(ServerCommandDispatcher())
+        mcDaemon.handler.eventBus.on(::onServerMessage)
+        mcDaemon.handler.eventBus.on(::onPlayerMessage)
         logger.info("Initialized")
     }
 
-    override fun dispose(daemon: McDaemon) {
-        this.daemon = daemon
+    override fun dispose() {
         logger.info("Disposed")
     }
 
@@ -36,7 +38,7 @@ class McDaemonApi : McDaemonModule {
         if (!message.startsWith(Commands.PREFIX)) return null
         try {
             val command = message.removePrefix(Commands.PREFIX)
-            val source = ServerCommandSource(daemon, handler, caller, message, isServer)
+            val source = ServerCommandSource(mcDaemon, handler, caller, message, isServer)
             return Commands.getDispatcher().execute(command, source).also {
                 logger.info("Command Result: $caller [$message] -> $it")
             }
@@ -59,5 +61,5 @@ class McDaemonApi : McDaemonModule {
 
 }
 
-val McDaemon.api
-    get() = this.findModule<McDaemonApi>()
+val McDaemonApi.Companion.instance
+    get() = mcDaemon.findModule<McDaemonApi>()

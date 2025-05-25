@@ -1,7 +1,5 @@
 package minerslab.mcd.api
 
-import minerslab.mcd.McDaemon
-
 /**
  * 系统模块
  *
@@ -9,7 +7,7 @@ import minerslab.mcd.McDaemon
  */
 interface McDaemonModule {
 
-    fun start(daemon: McDaemon) {}
-    fun dispose(daemon: McDaemon) {}
+    fun start() {}
+    fun dispose() {}
 
 }

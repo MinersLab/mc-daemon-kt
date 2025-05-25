@@ -9,9 +9,9 @@ class PluginLoadingContext(val pluginClassLoader: PluginClassLoader) {
     val pluginListeners = mutableSetOf<PluginListener>()
 
     companion object {
-        internal val current = ThreadLocal<PluginLoadingContext>()
-        fun get(): PluginLoadingContext = current.get()!!
-        fun getOrNull(): PluginLoadingContext? = current.get()
+        internal var current: PluginLoadingContext? = null
+        fun get(): PluginLoadingContext = current!!
+        fun getOrNull(): PluginLoadingContext? = current
     }
 
     override fun toString() = "PluginLoadingContext(${pluginClassLoader.meta.id})"

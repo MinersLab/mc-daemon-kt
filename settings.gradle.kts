@@ -6,7 +6,7 @@ rootProject.name = "mcd"
 
 include(
     "mcd-core",
-    "mcd-api", "mcd-api-permission",
+    "mcd-api", "mcd-permission-api",
     "mcd-launcher",
     "mcd-example-plugin"
 )

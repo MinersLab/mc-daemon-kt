@@ -3,16 +3,13 @@ package minerslab.mcd.api
 import minerslab.mcd.api.command.ServerCommandSource
 import minerslab.mcd.api.text.JsonText
 import minerslab.mcd.api.text.asString
-import java.nio.charset.Charset
+import minerslab.mcd.handler.prompt
 
-fun ServerCommandSource.sendCommand(command: String) = handler.run {
-    val writer = getProcess().outputWriter(Charset.forName(getConfig().inputCharset))
-    writer.write(handler.getCommandHelper().processCommand(command))
-    writer.flush()
-}
+fun ServerCommandSource.command(command: String) = handler.command(command)
+fun ServerCommandSource.prompt(command: String) = handler.prompt(command)
 
 fun ServerCommandSource.sendFeedback(content: List<JsonText>, broadcast: Boolean = false) = handler.run {
-    sendCommand(
+    command(
         handler.getCommandHelper().tellraw(
             if (broadcast) "@a" else sender,
             content.asString()
