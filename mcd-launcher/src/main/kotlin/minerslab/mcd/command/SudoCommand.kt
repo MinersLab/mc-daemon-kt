@@ -1,7 +1,6 @@
 package minerslab.mcd.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
-import minerslab.mcd.api.command.Commands.PREFIX
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.ServerRequirement
 import minerslab.mcd.api.command.and
@@ -24,7 +23,7 @@ object SudoCommand : Consumer<ServerCommandDispatcher> {
                         val sender: String by argument()
                         val command: String by argument()
                         source.sender = sender
-                        source.rawMessage = "${PREFIX}command"
+                        source.rawMessage = "${source.handler.config.server.daemonCommandPrefix}$command"
                         t.execute(command, source)
                     }
                 }

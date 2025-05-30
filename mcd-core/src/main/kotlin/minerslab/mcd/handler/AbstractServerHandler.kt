@@ -1,9 +1,7 @@
 package minerslab.mcd.handler
 
-import io.ktor.utils.io.charsets.name
 import kotlinx.io.IOException
-import kotlinx.serialization.Serializable
-import minerslab.mcd.McDaemon
+import minerslab.mcd.mcDaemon
 import org.glavo.rcon.Rcon
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -11,46 +9,25 @@ import starry.adventure.core.event.EventBus
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.io.path.div
-import kotlin.text.Charsets
 
-abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerConfig> : ServerHandler<T> {
+abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T> {
 
     override val logger: Logger = LoggerFactory.getLogger(this::class.java)
     override val eventBus: EventBus = EventBus(this::class)
 
-    @Serializable
-    open class AbstractServerConfig {
-        open var commandLine = "cmd /c run.bat"
-        open var inputCharset: String = Charsets.UTF_8.name
-        open var outputCharset: String = Charsets.UTF_8.name
-        open var rconCharset: String = Charsets.UTF_8.name
-        open var rcon: RconConfig = RconConfig()
-
-        @Serializable
-        open class RconConfig {
-            open var enabled: Boolean = true
-            open var port: Int = 25575
-            open var password: String = "123456"
-            open var host: String = "localhost"
-        }
-
-    }
-
     protected lateinit var serverProcess: Process
-    private lateinit var config: T
+    private lateinit var configDelegate: T
     protected lateinit var outputThread: Thread
     protected lateinit var inputThread: Thread
-    private lateinit var mcDaemon: McDaemon
-    private var rcon: Rcon? = null
+    var rcon: Rcon? = null
 
-    override fun getConfig() = config
-    override fun getProcess() = serverProcess
-    override fun getDaemon() = mcDaemon
-    override fun getRcon() = rcon
+    override val config
+        get() = configDelegate
+    override val process
+        get() = serverProcess
 
-    override fun initialize(config: T, mcDaemon: McDaemon) {
-        this.config = config
-        this.mcDaemon = mcDaemon
+    override fun initialize(config: T) {
+        configDelegate = config
         val tokenizer = StringTokenizer(config.commandLine)
         val command = Array(tokenizer.countTokens()) { tokenizer.nextToken() }
         serverProcess = ProcessBuilder(*command)
@@ -63,17 +40,15 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
         outputThread = createOutputThread()
         inputThread.start()
         outputThread.start()
-        getProcess().onExit()
+        process.onExit()
             .thenRun(mcDaemon::stop)
     }
 
-    protected open fun createInputThread(writeLock: Any = Any()): Thread = Thread {
+    protected open fun createInputThread(): Thread = Thread {
         while (true) {
-            val line = readlnOrNull() ?: break
+            val line = System.`in`.bufferedReader(Charset.forName(config.inputCharset)).readLine() ?: break
             try {
-                synchronized(writeLock) {
-                    tickInput(line)
-                }
+                tickInput(line)
             } catch (e: IOException) {
                 logger.error("Failed to write to server process", e)
                 break
@@ -82,7 +57,6 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
     }
 
     protected open fun createOutputThread(): Thread = Thread {
-        val process = getProcess()
         val reader = process.inputStream.bufferedReader(Charset.forName(config.outputCharset))
         while (process.isAlive) {
             val line = reader.readLine() ?: break
@@ -92,18 +66,18 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
         reader.close()
     }
 
-    open fun tickInput(line: String) {
-        serverProcess.outputStream.write((line + "\n").toByteArray(Charset.forName(config.inputCharset)))
-        serverProcess.outputStream.flush()
+    open fun startRcon() {
+        rcon = Rcon(config.rcon.host, config.rcon.port, config.rcon.password)
+        rcon?.charset = Charset.forName(config.rconCharset)
+        logger.info("Rcon connected at ${config.rcon.host}:${config.rcon.port}!")
     }
 
-    open fun tickOutput(line: String) {
-        if (isServerMessage(line)) handleServerMessage(line)
-        else if (isPlayerMessage(line)) handlePlayerMessage(line)
-        else if (config.rcon.enabled && rcon == null && isRconStarted(line)) {
-            rcon = Rcon(config.rcon.host, config.rcon.port, config.rcon.password)
-            rcon?.charset = Charset.forName(config.rconCharset)
-            logger.info("Rcon connected at ${config.rcon.host}:${config.rcon.port}!")
+    open fun tickOutput(line: String) {}
+
+    open fun tickInput(line: String) {
+        if (line.startsWith(config.server.gameCommandPrefix)) {
+            serverProcess.outputStream.write((line.removePrefix(config.server.gameCommandPrefix).trim() + "\n").toByteArray(Charset.forName(config.inputCharset)))
+            serverProcess.outputStream.flush()
         }
     }
 
@@ -117,15 +91,27 @@ abstract class AbstractServerHandler<T : AbstractServerHandler.AbstractServerCon
         logger.info("Stopped")
     }
 
-    override fun command(command: String) {
-        val rcon = getRcon()
-        if (rcon != null) {
-            rcon.command(command)
-        } else {
-            val writer = getProcess().outputWriter(Charset.forName(getConfig().inputCharset))
-            writer.write(getCommandHelper().processCommand(command) + "\n")
-            writer.flush()
-        }
+    private fun consoleCommand(command: String) {
+        val writer = process.outputWriter(Charset.forName(config.inputCharset))
+        writer.write(getCommandHelper().processCommand(command) + "\n")
+        writer.flush()
     }
+
+
+    abstract fun parseConsoleCommandFeedback(line: String): String
+
+    override fun command(command: String, mode: CommandExecutingMode): String =
+        when (mode) {
+            CommandExecutingMode.RCON -> getCommandHelper().processCommand(command).let {
+                val result = rcon?.command(it) ?: command(it, CommandExecutingMode.CONSOLE)
+                logger.debug("[Command] $it -> $result")
+                result
+            }
+            CommandExecutingMode.CONSOLE -> consoleCommand(command).let {
+                command(command)
+                val reader = process.inputStream.bufferedReader()
+                return parseConsoleCommandFeedback(reader.readLine().also(::println))
+            }
+        }
 
 }

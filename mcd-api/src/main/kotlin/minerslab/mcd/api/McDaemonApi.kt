@@ -35,12 +35,13 @@ class McDaemonApi : McDaemonModule {
     }
 
     fun handleCommand(handler: ServerHandler<*>, caller: String, message: String, isServer: Boolean): Int? {
-        if (!message.startsWith(Commands.PREFIX)) return null
+        val commandPrefix = handler.config.server.daemonCommandPrefix
+        if (!message.startsWith(commandPrefix)) return null
         try {
-            val command = message.removePrefix(Commands.PREFIX)
-            val source = ServerCommandSource(mcDaemon, handler, caller, message, isServer)
+            val command = message.removePrefix(commandPrefix)
+            val source = ServerCommandSource(handler, caller, message, isServer)
             return Commands.getDispatcher().execute(command, source).also {
-                logger.info("Command Result: $caller [$message] -> $it")
+                logger.info("[$caller] $message -> $it")
             }
         } catch (throwable: Throwable) {
             logger.error("$throwable")

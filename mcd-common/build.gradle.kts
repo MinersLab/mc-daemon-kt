@@ -6,15 +6,9 @@ plugins {
     alias(libs.plugins.shadow)
 
     id("maven-publish")
-    application
 }
 
-
-application {
-    mainClass = "minerslab.mcd.McDaemonLauncherKt"
-}
-
-group = "minerslab.mcd.launcher"
+group = "minerslab.mcd.common"
 
 repositories {
     mavenCentral()
@@ -25,9 +19,8 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
 
-    api(project(":mcd-common"))
+    api(libs.jline)
     api(project(":mcd-api"))
-    api(project(":mcd-permission-api"))
     api(project(":mcd-core"))
 }
 

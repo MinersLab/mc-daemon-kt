@@ -14,6 +14,7 @@ import minerslab.mcd.api.permission.permission
 import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.api.text.JsonText
 import minerslab.mcd.api.text.text
+import minerslab.mcd.mcDaemon
 import minerslab.mcd.plugin.PluginClassLoader.Companion.DISABLED_PREFIX
 import minerslab.mcd.plugin.PluginStatus.*
 import minerslab.mcd.util.Namespaces.MC_DAEMON
@@ -206,8 +207,8 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     argument("id", StringArgumentType.greedyString()) {
                         run {
                             val id: String by argument()
-                            val file = source.daemon.pluginManager.plugins[id]!!.file
-                            source.daemon.pluginManager.dispose(id)
+                            val file = mcDaemon.pluginManager.plugins[id]!!.file
+                            mcDaemon.pluginManager.dispose(id)
                             file.renameTo(file.parentFile.resolve("$DISABLED_PREFIX${file.name}"))
                         }
                     }
@@ -216,9 +217,9 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     argument("file", StringArgumentType.greedyString()) {
                         run {
                             val fileName: String by argument("file")
-                            val file = (source.daemon.pluginManager.pluginsPath / fileName).toFile()
+                            val file = (mcDaemon.pluginManager.pluginsPath / fileName).toFile()
                             file.renameTo(file.parentFile.resolve(file.name.removePrefix(DISABLED_PREFIX)))
-                            source.daemon.pluginManager.add(file)
+                            mcDaemon.pluginManager.add(file)
                         }
                     }
                 }
@@ -226,9 +227,9 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     argument("file", StringArgumentType.greedyString()) {
                         run {
                             val file: String by argument()
-                            val pluginFile = source.daemon.pluginManager.pluginsPath.resolve(file).toFile()
-                            source.daemon.pluginManager.add(pluginFile)
-                            source.daemon.pluginManager.reload(pluginFile)
+                            val pluginFile = mcDaemon.pluginManager.pluginsPath.resolve(file).toFile()
+                            mcDaemon.pluginManager.add(pluginFile)
+                            mcDaemon.pluginManager.reload(pluginFile)
                         }
                     }
                 }
@@ -236,7 +237,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     argument("id", StringArgumentType.greedyString()) {
                         run {
                             val id: String by argument()
-                            source.daemon.pluginManager.dispose(id)
+                            mcDaemon.pluginManager.dispose(id)
                         }
                     }
                 }
@@ -244,16 +245,16 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     argument("id", StringArgumentType.greedyString()) {
                         run {
                             val id: String by argument()
-                            source.daemon.pluginManager.reload(id)
+                            mcDaemon.pluginManager.reload(id)
                         }
                     }
                 }
                 literal("list") {
                     literal("unloaded") {
                         run {
-                            for ((file, meta) in source.daemon.pluginManager.scan()) {
-                                if (meta.id in source.daemon.pluginManager.plugins) continue
-                                val name = file.relativeTo(source.daemon.pluginManager.pluginsPath.toFile())
+                            for ((file, meta) in mcDaemon.pluginManager.scan()) {
+                                if (meta.id in mcDaemon.pluginManager.plugins) continue
+                                val name = file.relativeTo(mcDaemon.pluginManager.pluginsPath.toFile())
                                 val content = "${meta.id} ($name)"
                                 val text = JsonText(
                                     text().gray().a(content).toString(),
@@ -267,7 +268,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                         }
                     }
                     run {
-                        for ((pluginName, plugin) in source.daemon.pluginManager.plugins) {
+                        for ((pluginName, plugin) in mcDaemon.pluginManager.plugins) {
                             val text = text()
                             when (plugin.status) {
                                 IDLE -> text.darkGray()
@@ -286,7 +287,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                             if (plugin.status == IDLE) jsonText = jsonText.copy(
                                 clickEvent = JsonText.ClickEvent(
                                     JsonText.ClickEvent.Action.SUGGEST_COMMAND,
-                                    command = "!!mcd plugin load ${plugin.file.relativeTo(source.daemon.pluginManager.pluginsPath.toFile())}"
+                                    command = "!!mcd plugin load ${plugin.file.relativeTo(mcDaemon.pluginManager.pluginsPath.toFile())}"
                                 )
                             )
                             if (plugin.status == LOADED) jsonText = jsonText.copy(

@@ -9,6 +9,7 @@ logback = "1.5.18"
 shadow = "9.0.0-beta13"
 git-version = "3.3.0"
 minecraft-rcon = "3.0"
+jline = "3.29.0"
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
@@ -35,3 +36,4 @@ ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "kto
 ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 minecraft-rcon = { module = "org.glavo:rcon-java", version.ref = "minecraft-rcon" }
+jline = { group = "org.jline", name = "jline", version.ref ="jline" }

@@ -5,7 +5,7 @@ plugins {
 rootProject.name = "mcd"
 
 include(
-    "mcd-core",
+    "mcd-core", "mcd-common",
     "mcd-api", "mcd-permission-api",
     "mcd-launcher",
     "mcd-example-plugin"

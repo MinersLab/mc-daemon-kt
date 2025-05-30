@@ -10,7 +10,6 @@ import kotlinx.serialization.serializer
 import minerslab.mcd.api.McDaemonModule
 import minerslab.mcd.event.EmbeddedServerEvent
 import minerslab.mcd.handler.ServerHandler
-import minerslab.mcd.handler.VanillaServerHandler
 import minerslab.mcd.plugin.PluginManager
 import starry.adventure.core.event.EventBus
 import java.nio.file.Path
@@ -56,11 +55,11 @@ class McDaemon(val args: Array<out String>, val path: Path) {
 
     val pluginManager = PluginManager(this)
     val modules = ServiceLoader.load(McDaemonModule::class.java).toList()
-    val handlers = mutableMapOf<String, KClass<out ServerHandler<*>>>().apply {
-        this["vanilla"] = VanillaServerHandler::class
-    }
+    val handlers = mutableMapOf<String, KClass<out ServerHandler<*>>>()
 
-    val handler: ServerHandler<*> = handlers[config.handler]!!.primaryConstructor!!.call()
+    val handler: ServerHandler<*> by lazy {
+        handlers[config.handler]!!.primaryConstructor!!.call()
+    }
 
     @Suppress("UNCHECKED_CAST")
     @OptIn(ExperimentalSerializationApi::class)
@@ -74,7 +73,7 @@ class McDaemon(val args: Array<out String>, val path: Path) {
             }
             Hocon.decodeFromConfig(serializer(configClass.createType()), ConfigFactory.parseFile(this))
         }
-        (handler as ServerHandler<Any?>).initialize(config, this)
+        (handler as ServerHandler<Any?>).initialize(config)
     }
 
     fun start() {

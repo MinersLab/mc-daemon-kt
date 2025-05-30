@@ -1,6 +1,7 @@
 package minerslab.mcd.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
+import com.mojang.brigadier.tree.CommandNode
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.feature
 import minerslab.mcd.api.sendFeedback
@@ -34,6 +35,11 @@ object HelpCommand : Consumer<ServerCommandDispatcher> {
                 }
             }
             argument("command", StringArgumentType.greedyString()) {
+                suggests {
+                    t.root.children
+                        .map(CommandNode<*>::getName)
+                        .forEach(it::suggest)
+                }
                 run {
                     val command: String by argument()
                     val node = t.root.getChild(command)
