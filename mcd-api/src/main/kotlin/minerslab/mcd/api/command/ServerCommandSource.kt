@@ -1,7 +1,7 @@
 package minerslab.mcd.api.command
 
 import com.mojang.brigadier.CommandDispatcher
-import minerslab.mcd.api.entity.player.ServerPlayer
+import minerslab.mcd.api.world.player.ServerPlayer
 import minerslab.mcd.handler.ServerHandler
 
 /**

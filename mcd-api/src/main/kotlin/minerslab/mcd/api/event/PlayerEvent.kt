@@ -1,6 +1,6 @@
 package minerslab.mcd.api.event
 
-import minerslab.mcd.api.entity.player.ServerPlayer
+import minerslab.mcd.api.world.player.ServerPlayer
 import minerslab.mcd.handler.ServerHandler
 import starry.adventure.core.event.Event
 

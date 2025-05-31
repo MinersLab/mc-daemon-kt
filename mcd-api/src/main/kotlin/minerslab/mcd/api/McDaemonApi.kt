@@ -25,7 +25,7 @@ class McDaemonApi : McDaemonModule {
     /**
      * 管理特性的配置项目
      */
-    val featureConfig by useConfig<FeatureConfig>(MC_DAEMON / "features.json")
+    val features by useConfig<FeatureConfig>(MC_DAEMON / "features.json")
 
     override fun start() {
         Commands.reloadDispatcher(ServerCommandDispatcher())
@@ -66,3 +66,4 @@ class McDaemonApi : McDaemonModule {
 
 val McDaemonApi.Companion.instance
     get() = mcDaemon.findModule<McDaemonApi>()
+

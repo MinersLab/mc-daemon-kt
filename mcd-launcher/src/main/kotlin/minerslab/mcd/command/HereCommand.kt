@@ -1,6 +1,6 @@
 package minerslab.mcd.command
 
-import minerslab.mcd.api.command.PlayerRequirement
+import minerslab.mcd.api.command.IsPlayer
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.and
 import minerslab.mcd.api.command.feature
@@ -54,7 +54,7 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
 
     override fun accept(t: ServerCommandDispatcher) = t.register {
         literal("here") {
-            requires(feature("command.$MC_DAEMON.here") and PlayerRequirement)
+            requires(feature("command.$MC_DAEMON.here") and IsPlayer)
             run {
                 val player = source.sender()
                 val dimension = player.getDimension()

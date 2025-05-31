@@ -9,6 +9,7 @@ import minerslab.mcd.plugin.Plugin
 import minerslab.mcd.plugin.PluginEvent
 import minerslab.mcd.plugin.PluginLoadingContext
 import minerslab.mcd.util.addEventListener
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import starry.adventure.brigadier.command.argument
@@ -40,7 +41,7 @@ object ExamplePlugin : Plugin {
             argument("text", StringArgumentType.greedyString()) {
                 run {
                     val text: String by argument()
-                    source.sendFeedback(text)
+                    source.sendFeedback(MiniMessage.miniMessage().deserialize(text))
                 }
             }
         }

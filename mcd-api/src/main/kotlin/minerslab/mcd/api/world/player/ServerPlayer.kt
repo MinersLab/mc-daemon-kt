@@ -1,4 +1,4 @@
-package minerslab.mcd.api.entity.player
+package minerslab.mcd.api.world.player
 
 import minerslab.mcd.handler.ServerHandler
 import minerslab.mcd.util.Namespaces
@@ -11,7 +11,7 @@ open class ServerPlayer(protected val handler: ServerHandler<*>, val name: Strin
     /**
      * 获取指定路径的数据
      *
-     * @return 一个含有 value 字段的 [net.kyori.adventure.nbt.CompoundBinaryTag]
+     * @return 一个含有 value 字段的 [CompoundBinaryTag]
      */
     open fun retrieveData(path: String): CompoundBinaryTag = handler.getCommandHelper()
         .processDataGet(handler.command("data get entity $name $path"))

@@ -6,7 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType.word
 import kotlinx.serialization.json.Json
 import minerslab.mcd.McDaemonVersion
 import minerslab.mcd.api.command.ServerCommandDispatcher
-import minerslab.mcd.api.command.ServerRequirement
+import minerslab.mcd.api.command.IsServer
 import minerslab.mcd.api.command.or
 import minerslab.mcd.api.permission.McDaemonPermissionApi
 import minerslab.mcd.api.permission.instance
@@ -37,14 +37,14 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                 )
             }
             literal("stop") {
-                requires(permission("command.$MC_DAEMON.mcd.stop") or ServerRequirement)
+                requires(permission("command.$MC_DAEMON.mcd.stop") or IsServer)
                 run {
                     source.handler.command(source.handler.getCommandHelper().stop())
                 }
             }
             literal("perms") {
                 val perms = McDaemonPermissionApi.instance
-                requires(permission("command.$MC_DAEMON.mcd.perms") or ServerRequirement)
+                requires(permission("command.$MC_DAEMON.mcd.perms") or IsServer)
                 literal("reload") {
                     run {
                         perms.configWrapper.reload()
@@ -202,7 +202,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                 }
             }
             literal("plugin") {
-                requires(permission("command.$MC_DAEMON.mcd.plugin") or ServerRequirement)
+                requires(permission("command.$MC_DAEMON.mcd.plugin") or IsServer)
                 literal("disable") {
                     argument("id", StringArgumentType.greedyString()) {
                         run {

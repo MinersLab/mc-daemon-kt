@@ -3,6 +3,7 @@ package minerslab.mcd.api.command
 import minerslab.mcd.api.McDaemonApi
 import minerslab.mcd.api.instance
 import minerslab.mcd.api.config.FeatureConfig
+import minerslab.mcd.api.config.isFutureEnabled
 
 /**
  * 命令需求
@@ -12,15 +13,15 @@ typealias Requirement = (ServerCommandSource.() -> Boolean)
 /**
  * 要求命令的调用者必须为玩家
  */
-object PlayerRequirement : Requirement {
-    override fun invoke(p1: ServerCommandSource) = !p1.isServer
+object IsPlayer : Requirement {
+    override fun invoke(source: ServerCommandSource) = !source.isServer
 }
 
 /**
  * 要求命令的调用者必须为服务器
  */
-object ServerRequirement : Requirement {
-    override fun invoke(p1: ServerCommandSource) = p1.isServer
+object IsServer : Requirement {
+    override fun invoke(source: ServerCommandSource) = source.isServer
 }
 
 
@@ -30,8 +31,7 @@ object ServerRequirement : Requirement {
  * @param defaultEnabled 当传入值为 `false`，根据 [FeatureConfig.enabled] 判断；当传入值为 `true`，根据 [FeatureConfig.disabled] 判断
  */
 fun feature(name: String, defaultEnabled: Boolean = true): Requirement = {
-    if (defaultEnabled) name !in McDaemonApi.instance.featureConfig.disabled
-    else name in McDaemonApi.instance.featureConfig.enabled
+    McDaemonApi.instance.features.isFutureEnabled(name, defaultEnabled)
 }
 
 operator fun Requirement.not(): Requirement = { !this@not.invoke(this) }
