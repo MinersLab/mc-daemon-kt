@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.1.21"
-adventure-kt = "0ce836b719"
+adventure-kt = "1c76216a08"
 adventure = "4.21.0"
 kotlinx-serialization = "1.8.1"
 kotlinx-coroutines = "1.10.2"

@@ -3,6 +3,7 @@ package org.example
 import com.mojang.brigadier.arguments.StringArgumentType
 import minerslab.mcd.api.command.ServerCommandRegistration
 import minerslab.mcd.api.config.usePluginConfig
+import minerslab.mcd.api.registry.deferred
 import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.plugin.Plugin
 import minerslab.mcd.plugin.PluginEvent
@@ -16,12 +17,14 @@ object ExamplePlugin : Plugin {
 
     val context = PluginLoadingContext.get()
     val eventBus = context.eventBus
+    val id = context.pluginClassLoader.meta.id
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     init {
         eventBus.addEventListener(::postConstruct)
         eventBus.addEventListener(::postInitialize)
+        ExampleRegistries.bootstrap()
     }
 
     private fun postConstruct(event: PluginEvent.PostConstructEvent) {
@@ -49,6 +52,10 @@ object ExamplePlugin : Plugin {
         logger.info("[Context] $context")
         logger.info("Initialized")
         logger.info(config.message)
+        val hello = ExampleRegistries.MY_REGISTRY
+            .deferred()
+            .register("hello") { "Hello, world!" }
+        logger.info(ExampleRegistries.MY_REGISTRY.get(hello.identifier).toString())
     }
 
     override fun dispose() {
