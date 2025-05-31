@@ -5,14 +5,15 @@ import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.ServerCommandSource
 import minerslab.mcd.api.config.FeatureConfig
 import minerslab.mcd.api.config.useConfig
-import minerslab.mcd.event.ServerEvent
+import minerslab.mcd.api.event.PlayerEvent
+import minerslab.mcd.api.event.ServerEvent
 import minerslab.mcd.findModule
 import minerslab.mcd.handler.ServerHandler
 import minerslab.mcd.mcDaemon
 import minerslab.mcd.util.Namespaces.MC_DAEMON
+import minerslab.mcd.util.addEventListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import starry.adventure.core.event.WrappedEvent
 import starry.adventure.core.registry.Identifiers.div
 
 class McDaemonApi : McDaemonModule {
@@ -25,8 +26,8 @@ class McDaemonApi : McDaemonModule {
 
     override fun start() {
         Commands.reloadDispatcher(ServerCommandDispatcher())
-        mcDaemon.handler.eventBus.on(::onServerMessage)
-        mcDaemon.handler.eventBus.on(::onPlayerMessage)
+        mcDaemon.handler.eventBus.addEventListener(::onServerMessage)
+        mcDaemon.handler.eventBus.addEventListener(::onPlayerMessage)
         logger.info("Initialized")
     }
 
@@ -50,13 +51,11 @@ class McDaemonApi : McDaemonModule {
         }
     }
 
-    private fun onServerMessage(wrapped: WrappedEvent<ServerEvent.ServerMessageEvent>) {
-        val event = wrapped.unwrap()
+    private fun onServerMessage(event: ServerEvent.MessageEvent) {
         handleCommand(event.handler, event.caller, event.message, true)
     }
 
-    private fun onPlayerMessage(wrapped: WrappedEvent<ServerEvent.PlayerMessageEvent>) {
-        val event = wrapped.unwrap()
+    private fun onPlayerMessage(event: PlayerEvent.MessageEvent) {
         handleCommand(event.handler, event.caller, event.message, false)
     }
 

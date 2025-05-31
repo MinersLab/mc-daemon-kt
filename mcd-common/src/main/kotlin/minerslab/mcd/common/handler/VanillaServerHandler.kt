@@ -1,8 +1,9 @@
 package minerslab.mcd.common.handler
 
 import kotlinx.io.IOException
+import minerslab.mcd.api.event.PlayerEvent
 import minerslab.mcd.common.util.createConsoleReader
-import minerslab.mcd.event.ServerEvent
+import minerslab.mcd.api.event.ServerEvent
 import minerslab.mcd.handler.AbstractServerConfig
 import minerslab.mcd.handler.AbstractServerHandler
 import minerslab.mcd.handler.ServerHandler
@@ -14,14 +15,16 @@ import java.nio.charset.Charset
 open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() {
 
     companion object {
-        val PLAYER_MESSAGE_REGEX =
+        @JvmStatic val PLAYER_MESSAGE_REGEX =
             """^\[.*?] \[.*?]:\s+(?:\[Not Secure]\s+)?<([^>]+)>(.*)$""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val PLAYER_SAY_MESSAGE_REGEX =
+        @JvmStatic val PLAYER_SAY_MESSAGE_REGEX =
             """^\[.*?] \[.*?]:\s+(?:\[Not Secure]\s+)?\[([^>]+)](.*)$""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val RCON_STARTED_MESSAGE_REGEX =
+        @JvmStatic val RCON_STARTED_MESSAGE_REGEX =
             """^\[[^]]+] \[[^]]+]: Thread RCON Listener started$""".toRegex(RegexOption.DOT_MATCHES_ALL)
-        val CONSOLE_COMMAND_RESULT_REGEX =
+        @JvmStatic val CONSOLE_COMMAND_RESULT_REGEX =
             """^\[[^]]+] \[[^]]+]: (.*)$""".toRegex(RegexOption.DOT_MATCHES_ALL)
+        @JvmStatic val PLAYER_JOIN_REGEX =
+            """^\[[^]]+] \[[^]]+]: (.*) joined the game$""".toRegex(RegexOption.DOT_MATCHES_ALL)
 
         val SERVER_NAMES = mutableListOf("Server", "Rcon")
     }
@@ -32,6 +35,7 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
         return result.groupValues[1]
     }
 
+    protected fun isPlayerJoinMessage(line: String) = line.matches(PLAYER_JOIN_REGEX)
     protected fun isPlayerMessage(line: String) = line.matches(PLAYER_MESSAGE_REGEX) || line.matches(PLAYER_SAY_MESSAGE_REGEX)
     protected fun isServerMessage(line: String): Boolean =
         PLAYER_SAY_MESSAGE_REGEX.matchEntire(line)?.groupValues?.getOrNull(1)?.trim() in SERVER_NAMES
@@ -41,15 +45,21 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
     protected fun handlePlayerMessage(line: String) {
         val result = PLAYER_MESSAGE_REGEX.matchEntire(line) ?: PLAYER_SAY_MESSAGE_REGEX.matchEntire(line) ?: return
         val caller = result.groupValues[1]
-        val message = result.groupValues[2].trimStart() // 去掉开头的一个空格
-        eventBus.emit(ServerEvent.PlayerMessageEvent(this, caller, message))
+        val message = result.groupValues[2].trimStart() // 去掉开头的空格
+        eventBus.emit(PlayerEvent.MessageEvent(this, caller, message))
     }
 
     protected fun handleServerMessage(line: String) {
         val result = PLAYER_SAY_MESSAGE_REGEX.matchEntire(line) ?: return
         val caller = result.groupValues[1]
-        val message = result.groupValues[2].trimStart() // 去掉开头的一个空格
-        eventBus.emit(ServerEvent.ServerMessageEvent(this, caller, message))
+        val message = result.groupValues[2].trimStart() // 去掉开头的空格
+        eventBus.emit(ServerEvent.MessageEvent(this, caller, message))
+    }
+
+    protected fun handlePlayerJoin(line: String) {
+        val result = PLAYER_JOIN_REGEX.matchEntire(line) ?: return
+        val name = result.groupValues[1].trim()
+        eventBus.emit(PlayerEvent.JoinEvent(this, name))
     }
 
     override fun getCommandHelper() = VanillaCommandHelper
@@ -68,7 +78,7 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
         if (line.startsWith(config.server.gameCommandPrefix)) {
             super.tickInput(line)
         } else {
-            eventBus.emit(ServerEvent.ServerMessageEvent(this, "Server", "${config.server.daemonCommandPrefix}$line"))
+            eventBus.emit(ServerEvent.MessageEvent(this, "Server", "${config.server.daemonCommandPrefix}$line"))
         }
     }
 
@@ -76,6 +86,7 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
         if (isServerMessage(line)) handleServerMessage(line)
         else if (isPlayerMessage(line)) handlePlayerMessage(line)
         else if (config.rcon.enabled && rcon == null && isRconStarted(line)) startRcon()
+        else if (isPlayerJoinMessage(line)) handlePlayerJoin(line)
     }
 
     override fun createInputThread() = Thread {

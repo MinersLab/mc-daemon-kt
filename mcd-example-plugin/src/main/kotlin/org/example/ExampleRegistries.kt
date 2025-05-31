@@ -14,8 +14,8 @@ object ExampleRegistries {
     private val REGISTRIES = Registries.REGISTRIES.deferred()
 
     @JvmStatic
-    val MY_REGISTRY by REGISTRIES.register("my_register") {
-        Registry(Registries.REGISTRIES.createResourceKey<IRegistry<Any>>(Identifier(id, "my_register")))
+    val MY_REGISTRY by REGISTRIES.register("my_registry") {
+        Registry(Registries.REGISTRIES.createResourceKey<IRegistry<Any>>(Identifier(id, "my_registry")))
     }
 
     fun bootstrap() {}

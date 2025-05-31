@@ -1,6 +1,6 @@
 package minerslab.mcd.event
 
-import io.ktor.server.application.*
+import io.ktor.server.application.Application
 import minerslab.mcd.EmbeddedServerType
 import starry.adventure.core.event.Event
 
