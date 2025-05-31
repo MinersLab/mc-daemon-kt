@@ -42,6 +42,9 @@ class WrappedConfig<T : Any>(val file: File, configClass: KClass<T>, val format:
 
 }
 
+/**
+ * 根据调用者插件 id 来创建配置文件
+ */
 inline fun <reified T : Any> PluginLoadingContext.usePluginConfig(
     path: String,
     format: StringFormat = McDaemonConfig.json
@@ -54,6 +57,9 @@ inline fun <reified T : Any> PluginLoadingContext.usePluginConfig(
 inline fun <reified T : Any> useConfig(identifier: Identifier, format: StringFormat = McDaemonConfig.json) =
     useConfig<T>("${identifier.getNamespace()}/${identifier.getPath()}", format)
 
+/**
+ * 将会在 config 目录下的 [path] 创建配置文件
+ */
 inline fun <reified T : Any> useConfig(path: String, format: StringFormat = McDaemonConfig.json) =
     (mcDaemon.path / "config" / path).toFile().apply {
         parentFile.mkdirs()

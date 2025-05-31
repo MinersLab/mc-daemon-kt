@@ -5,6 +5,9 @@ import starry.adventure.core.registry.IRegistry
 import starry.adventure.core.registry.Identifier
 import starry.adventure.core.registry.ResourceKey
 
+/**
+ * 插件注册表注册入口
+ */
 class DeferredRegister<T>(private val context: PluginLoadingContext, val registryKey: ResourceKey<IRegistry<T>>) : DeferredRegistry<Pair<Identifier, T>, Unit, RegistryEntry<*>> {
 
     private val entries = mutableMapOf<Identifier, T>()

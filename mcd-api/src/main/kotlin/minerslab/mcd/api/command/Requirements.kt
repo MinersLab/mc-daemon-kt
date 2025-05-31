@@ -2,17 +2,33 @@ package minerslab.mcd.api.command
 
 import minerslab.mcd.api.McDaemonApi
 import minerslab.mcd.api.instance
+import minerslab.mcd.api.config.FeatureConfig
 
+/**
+ * 命令需求
+ */
 typealias Requirement = (ServerCommandSource.() -> Boolean)
 
+/**
+ * 要求命令的调用者必须为玩家
+ */
 object PlayerRequirement : Requirement {
     override fun invoke(p1: ServerCommandSource) = !p1.isServer
 }
 
+/**
+ * 要求命令的调用者必须为服务器
+ */
 object ServerRequirement : Requirement {
     override fun invoke(p1: ServerCommandSource) = p1.isServer
 }
 
+
+/**
+ * 要求特性必须被启用
+ * @param name 特性名称
+ * @param defaultEnabled 当传入值为 `false`，根据 [FeatureConfig.enabled] 判断；当传入值为 `true`，根据 [FeatureConfig.disabled] 判断
+ */
 fun feature(name: String, defaultEnabled: Boolean = true): Requirement = {
     if (defaultEnabled) name !in McDaemonApi.instance.featureConfig.disabled
     else name in McDaemonApi.instance.featureConfig.enabled

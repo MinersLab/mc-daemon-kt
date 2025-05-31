@@ -25,8 +25,14 @@ open class ServerPlayer(protected val handler: ServerHandler<*>, val name: Strin
         .processDataGet(handler.command("data get entity $name"))
         .let { TagStringIO.get().asCompound(it) }
 
-
+    /**
+     * 获取玩家所处维度
+     */
     open fun getDimension() = identifierOf(retrieveData("Dimension").getString("value"), Namespaces.MINECRAFT)
+
+    /**
+     * 获取玩家位置
+     */
     open fun getPosition() = retrieveData("Pos").getList("value").let {
         val x = it.getDouble(0)
         val y = it.getDouble(1)

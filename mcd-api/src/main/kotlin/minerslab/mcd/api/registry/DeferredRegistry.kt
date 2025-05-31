@@ -4,6 +4,9 @@ import minerslab.mcd.plugin.PluginListener
 import minerslab.mcd.plugin.PluginLoadingContext
 import kotlin.reflect.KClass
 
+/**
+ * 插件注册入口
+ */
 interface DeferredRegistry<T, U, R> : PluginListener {
 
     open class Manager<T : DeferredRegistry<*, *, *>>(private val clazz: KClass<T>) {

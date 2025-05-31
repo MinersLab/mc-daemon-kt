@@ -5,14 +5,28 @@ import java.net.URLClassLoader
 import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.primaryConstructor
 
+/**
+ * 插件类加载器
+ */
 class PluginClassLoader(val file: File, val meta: PluginMeta) : URLClassLoader(arrayOf(file.toURI().toURL())) {
 
     companion object {
         const val DISABLED_PREFIX = "[DISABLED] "
     }
 
+    /**
+     * 插件上下文
+     */
     val pluginLoadingContext = PluginLoadingContext(this)
+
+    /**
+     * 插件实例
+     */
     var instance: Plugin? = null
+
+    /**
+     * 插件加载状态
+     */
     var status: PluginStatus = PluginStatus.IDLE
 
     fun isEnabled() = !file.name.startsWith(DISABLED_PREFIX)

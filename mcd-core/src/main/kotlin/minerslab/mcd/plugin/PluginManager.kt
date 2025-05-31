@@ -14,6 +14,9 @@ import kotlin.io.path.div
 import kotlin.io.path.name
 import kotlin.io.path.walk
 
+/**
+ * 插件管理器
+ */
 class PluginManager(daemon: McDaemon) {
 
     val pluginsPath: Path = (daemon.path / "plugins").createDirectories()

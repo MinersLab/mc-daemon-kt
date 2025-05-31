@@ -5,6 +5,10 @@ import minerslab.mcd.api.registry.DeferredRegistry
 import minerslab.mcd.plugin.PluginLoadingContext
 import starry.adventure.brigadier.dispatcher.DispatcherRegisterContext
 
+/**
+ * 插件命令注册入口
+ * @see PluginLoadingContext
+ */
 class ServerCommandRegistration(val pluginLoadingContext: PluginLoadingContext) : DeferredRegistry<Unit, DispatcherRegisterContext<ServerCommandSource>, Unit> {
 
     companion object : DeferredRegistry.Manager<ServerCommandRegistration>(ServerCommandRegistration::class)

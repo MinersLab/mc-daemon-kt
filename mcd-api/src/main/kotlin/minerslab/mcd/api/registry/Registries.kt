@@ -7,17 +7,33 @@ import starry.adventure.core.registry.Registry
 import starry.adventure.core.registry.ResourceKey
 import starry.adventure.core.registry.identifierOf
 
+/**
+ * 注册表
+ */
 object Registries {
 
+    /**
+     * 注册键
+     */
     object Keys {
         private fun <T> create(name: String) = ResourceKey<IRegistry<T>>(identifierOf("registry", MC_DAEMON), identifierOf(name, MC_DAEMON))
 
+        /**
+         * 注册表注册键
+         * @see ResourceKey
+         * @see Registry
+         */
         @JvmStatic
-        val REGISTRIES = create<IRegistry<*>>("registry")
+        val REGISTRY = create<IRegistry<*>>("registry")
     }
 
+    /**
+     * 注册表注册
+     * @see ResourceKey
+     * @see Registry
+     */
     @JvmStatic
-    val REGISTRIES = Registry(Keys.REGISTRIES)
+    val REGISTRIES = Registry(Keys.REGISTRY)
 
     init {
         REGISTRIES.register(identifierOf("registry", MC_DAEMON)) { REGISTRIES }

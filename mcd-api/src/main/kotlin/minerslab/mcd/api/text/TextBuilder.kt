@@ -2,6 +2,11 @@ package minerslab.mcd.api.text
 
 import java.util.stream.IntStream
 
+/**
+ * 格式化文本
+ *
+ * [https://minecraft.wiki/w/Formatting_codes](https://minecraft.wiki/w/Formatting_codes)
+ */
 class TextBuilder : CharSequence {
 
     private var text = ""

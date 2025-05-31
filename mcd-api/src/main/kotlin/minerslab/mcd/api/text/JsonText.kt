@@ -12,6 +12,11 @@ private val json = Json {
     explicitNulls = true
 }
 
+/**
+ * Json 文本
+ *
+ * [https://minecraft.wiki/w/Text_component_format](https://minecraft.wiki/w/Text_component_format)
+ */
 @Serializable
 data class JsonText(
     val text: String? = null,

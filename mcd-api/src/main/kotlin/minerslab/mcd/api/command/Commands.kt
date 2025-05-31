@@ -4,6 +4,9 @@ import starry.adventure.brigadier.dispatcher.DispatcherRegisterContext
 import starry.adventure.brigadier.dispatcher.register
 import java.util.function.Consumer
 
+/**
+ * 命令注册表
+ */
 object Commands {
 
     private lateinit var dispatcher: ServerCommandDispatcher

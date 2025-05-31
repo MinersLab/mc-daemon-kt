@@ -22,6 +22,9 @@ class McDaemonApi : McDaemonModule {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    /**
+     * 管理特性的配置项目
+     */
     val featureConfig by useConfig<FeatureConfig>(MC_DAEMON / "features.json")
 
     override fun start() {

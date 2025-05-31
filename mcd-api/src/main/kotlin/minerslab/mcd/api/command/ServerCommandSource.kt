@@ -4,6 +4,9 @@ import com.mojang.brigadier.CommandDispatcher
 import minerslab.mcd.api.entity.player.ServerPlayer
 import minerslab.mcd.handler.ServerHandler
 
+/**
+ * 服务器命令会话
+ */
 open class ServerCommandSource(
     val handler: ServerHandler<*>,
     var sender: String,
@@ -11,6 +14,9 @@ open class ServerCommandSource(
     var isServer: Boolean = false
 ) {
 
+    /**
+     * 获取触发者
+     */
     open fun sender() = ServerPlayer(handler, sender)
 
 }

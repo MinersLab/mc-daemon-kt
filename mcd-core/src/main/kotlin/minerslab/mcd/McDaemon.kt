@@ -101,6 +101,9 @@ class McDaemon(val args: Array<out String>, val path: Path) {
 
 }
 
+/**
+ * 版本信息
+ */
 object McDaemonVersion {
 
     fun toMap() = meta.toMap().mapKeys { it.key.toString() }.mapValues { it.value.toString() }
@@ -117,7 +120,14 @@ object McDaemonVersion {
 }
 
 internal lateinit var currentMcDaemon: McDaemon
+
+/**
+ * 获取 [McDaemon] 实例
+ */
 val mcDaemon: McDaemon
     get() = currentMcDaemon
 
+/**
+ * 在 [McDaemon] 实例中查找 [McDaemonModule] 模块
+ */
 inline fun <reified T : McDaemonModule> McDaemon.findModule(): T = modules.filterIsInstance<T>().first()

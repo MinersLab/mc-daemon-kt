@@ -16,17 +16,35 @@ interface ServerHandler<T : AbstractServerConfig> {
     @Target(AnnotationTarget.CLASS)
     annotation class Config(val configClass: KClass<*>)
 
+    /**
+     * 事件总线
+     */
     val eventBus: EventBus
     val logger: Logger
+
+    /**
+     * 配置项目
+     */
     val config: T
+
+    /**
+     * 服务器进程
+     */
     val process: Process
 
     /**
      * @param config 配置项目
      */
     fun initialize(config: T)
+
+    /**
+     * 停止 [ServerHandler]
+     */
     fun dispose()
 
+    /**
+     * 获取命令助手
+     */
     fun getCommandHelper(): CommandHelper
 
     /**
