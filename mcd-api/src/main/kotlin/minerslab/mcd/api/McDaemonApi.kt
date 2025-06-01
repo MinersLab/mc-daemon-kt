@@ -24,10 +24,11 @@ class McDaemonApi : McDaemonModule {
 
     val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
+    var featuresWrapper = useConfig<FeatureConfig>(MC_DAEMON / "features.json")
     /**
      * 管理特性的配置项目
      */
-    val features by useConfig<FeatureConfig>(MC_DAEMON / "features.json")
+    var features by featuresWrapper
 
     override fun start() {
         Commands.reloadDispatcher(ServerCommandDispatcher())

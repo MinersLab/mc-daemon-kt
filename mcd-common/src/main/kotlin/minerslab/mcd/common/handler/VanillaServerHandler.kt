@@ -85,6 +85,7 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
     }
 
     override fun tickInput(line: String) {
+        if (line.isEmpty()) return
         if (line.startsWith(config.server.gameCommandPrefix)) {
             super.tickInput(line)
         } else {

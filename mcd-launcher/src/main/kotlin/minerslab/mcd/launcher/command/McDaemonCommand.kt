@@ -1,16 +1,21 @@
-package minerslab.mcd.command
+package minerslab.mcd.launcher.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType.string
 import com.mojang.brigadier.arguments.StringArgumentType.word
 import kotlinx.serialization.json.Json
 import minerslab.mcd.McDaemonVersion
-import minerslab.mcd.api.command.ServerCommandDispatcher
+import minerslab.mcd.api.McDaemonApi
 import minerslab.mcd.api.command.IsServer
+import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.or
+import minerslab.mcd.api.config.isFutureEnabled
+import minerslab.mcd.api.data.Feature
+import minerslab.mcd.api.instance
 import minerslab.mcd.api.permission.McDaemonPermissionApi
 import minerslab.mcd.api.permission.instance
 import minerslab.mcd.api.permission.permission
+import minerslab.mcd.api.registry.Registries
 import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.api.text.JsonText
 import minerslab.mcd.api.text.text
@@ -18,8 +23,10 @@ import minerslab.mcd.mcDaemon
 import minerslab.mcd.plugin.PluginClassLoader.Companion.DISABLED_PREFIX
 import minerslab.mcd.plugin.PluginStatus.*
 import minerslab.mcd.util.Namespaces.MC_DAEMON
+import minerslab.mcd.util.Namespaces.mcDaemon
 import starry.adventure.brigadier.command.argument
 import starry.adventure.brigadier.dispatcher.register
+import starry.adventure.core.registry.Identifier
 import java.util.function.Consumer
 import kotlin.io.path.div
 
@@ -42,6 +49,53 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                     source.handler.command(source.handler.commandHelper.stop())
                 }
             }
+            literal("features") {
+                requires(permission("command.$MC_DAEMON.mcd.features") or IsServer)
+                literal("reload") {
+                    run {
+                        McDaemonApi.instance.featuresWrapper.reload()
+                    }
+                }
+                argument("name", string()) {
+                    suggests {
+                        Registries.FEATURES.toList()
+                            .map(Pair<Identifier, Feature>::first)
+                            .map(Identifier::toString)
+                            .map(Json::encodeToString)
+                            .forEach(it::suggest)
+                    }
+                    run {
+                        val name: String by argument()
+                        val feature = Registries.FEATURES.get(mcDaemon(name))
+                        val defaultEnabled = feature?.defaultEnabled ?: false
+                        val features = McDaemonApi.instance.features
+                        val isEnabled = features.isFutureEnabled(feature.toString(), defaultEnabled)
+                        source.sendFeedback(
+                            text().run { if (isEnabled) green() else red() }.a(isEnabled)
+                        )
+                    }
+                    literal("enable") {
+                        run {
+                            val name: String by argument()
+                            val feature = Registries.FEATURES.get(mcDaemon(name)) ?: return@run
+                            val features = McDaemonApi.instance.features
+                            features.enabled.add(feature.toString())
+                            features.disabled.remove(feature.toString())
+                            McDaemonApi.instance.features = features
+                        }
+                    }
+                    literal("disable") {
+                        run {
+                            val name: String by argument()
+                            val feature = Registries.FEATURES.get(mcDaemon(name)) ?: return@run
+                            val features = McDaemonApi.instance.features
+                            features.enabled.remove(feature.toString())
+                            features.disabled.add(feature.toString())
+                            McDaemonApi.instance.features = features
+                        }
+                    }
+                }
+            }
             literal("perms") {
                 val perms = McDaemonPermissionApi.instance
                 requires(permission("command.$MC_DAEMON.mcd.perms") or IsServer)
@@ -55,6 +109,9 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                         source.sendFeedback(perms.config.groups.keys.joinToString())
                     }
                     argument("name", word()) {
+                        suggests {
+                            perms.config.groups.keys.forEach(it::suggest)
+                        }
                         literal("list") {
                             run {
                                 val name: String by argument()
@@ -130,6 +187,9 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
                         source.sendFeedback(perms.config.users.keys.joinToString())
                     }
                     argument("name", word()) {
+                        suggests {
+                            perms.config.users.keys.forEach(it::suggest)
+                        }
                         literal("list") {
                             run {
                                 val name: String by argument()

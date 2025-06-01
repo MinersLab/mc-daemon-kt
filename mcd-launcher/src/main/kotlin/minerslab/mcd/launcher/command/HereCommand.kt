@@ -1,13 +1,13 @@
-package minerslab.mcd.command
+package minerslab.mcd.launcher.command
 
 import minerslab.mcd.api.command.IsPlayer
 import minerslab.mcd.api.command.ServerCommandDispatcher
 import minerslab.mcd.api.command.and
-import minerslab.mcd.api.command.feature
+import minerslab.mcd.api.data.feature
 import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.api.text.JsonText
 import minerslab.mcd.api.text.text
-import minerslab.mcd.util.Namespaces.MC_DAEMON
+import minerslab.mcd.launcher.registry.Features
 import minerslab.mcd.util.Namespaces.MINECRAFT
 import starry.adventure.brigadier.dispatcher.register
 import starry.adventure.core.registry.Identifier
@@ -54,7 +54,7 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
 
     override fun accept(t: ServerCommandDispatcher) = t.register {
         literal("here") {
-            requires(feature("command.$MC_DAEMON.here") and IsPlayer)
+            requires(feature(Features.Commands.HERE) and IsPlayer)
             run {
                 val player = source.sender()
                 val dimension = player.getDimension()

@@ -11,7 +11,7 @@ plugins {
 
 
 application {
-    mainClass = "minerslab.mcd.McDaemonLauncherKt"
+    mainClass = "minerslab.mcd.launcher.McDaemonLauncherKt"
 }
 
 group = "minerslab.mcd.launcher"

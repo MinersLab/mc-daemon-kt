@@ -1,11 +1,8 @@
 package minerslab.mcd.api.registry
 
+import minerslab.mcd.api.data.Feature
 import minerslab.mcd.util.Namespaces.MC_DAEMON
-import starry.adventure.core.registry.IRegistry
-import starry.adventure.core.registry.Identifier
-import starry.adventure.core.registry.Registry
-import starry.adventure.core.registry.ResourceKey
-import starry.adventure.core.registry.identifierOf
+import starry.adventure.core.registry.*
 
 /**
  * 注册表
@@ -25,6 +22,14 @@ object Registries {
          */
         @JvmStatic
         val REGISTRY = create<IRegistry<*>>("registry")
+
+        /**
+         * 特性注册键
+         * @see ResourceKey
+         * @see Registry
+         */
+        @JvmStatic
+        val FEATURE = create<Feature>("feature")
     }
 
     /**
@@ -35,8 +40,17 @@ object Registries {
     @JvmStatic
     val REGISTRIES = Registry(Keys.REGISTRY)
 
+    /**
+     * 特性注册
+     * @see ResourceKey
+     * @see Registry
+     */
+    @JvmStatic
+    val FEATURES = Registry(Keys.FEATURE)
+
     init {
-        REGISTRIES.register(identifierOf("registry", MC_DAEMON)) { REGISTRIES }
+        REGISTRIES.register(Keys.REGISTRY.getLocation()) { REGISTRIES }
+        REGISTRIES.register(Keys.FEATURE.getLocation()) { FEATURES }
     }
 
 }

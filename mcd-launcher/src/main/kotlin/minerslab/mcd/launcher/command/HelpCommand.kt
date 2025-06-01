@@ -1,13 +1,13 @@
-package minerslab.mcd.command
+package minerslab.mcd.launcher.command
 
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.tree.CommandNode
 import minerslab.mcd.api.command.ServerCommandDispatcher
-import minerslab.mcd.api.command.feature
+import minerslab.mcd.api.data.feature
 import minerslab.mcd.api.sendFeedback
 import minerslab.mcd.api.text.JsonText
 import minerslab.mcd.api.text.text
-import minerslab.mcd.util.Namespaces.MC_DAEMON
+import minerslab.mcd.launcher.registry.Features
 import starry.adventure.brigadier.command.argument
 import starry.adventure.brigadier.dispatcher.register
 import java.util.function.Consumer
@@ -16,7 +16,7 @@ object HelpCommand : Consumer<ServerCommandDispatcher> {
 
     override fun accept(t: ServerCommandDispatcher) = t.register {
         literal("help") {
-            requires(feature("command.$MC_DAEMON.help"))
+            requires(feature(Features.Commands.HELP))
             run {
                 for (command in t.root.children) {
                     if (!command.requirement.test(source)) continue
