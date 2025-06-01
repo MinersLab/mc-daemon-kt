@@ -12,9 +12,9 @@ interface CommandHelper {
     /**
      * 解析 `data get` 命令的运行结果
      *
-     * @return SNBT 文本
+     * @return `对象名称` 和 `SNBT 文本`
      */
-    fun processDataGet(raw: String): String
+    fun processDataGet(raw: String): Pair<String, String>
 
     fun stop() = "stop"
     fun tellraw(target: String, raw: String): String = "tellraw $target $raw"

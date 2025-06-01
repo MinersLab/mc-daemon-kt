@@ -62,15 +62,25 @@ open class VanillaServerHandler : AbstractServerHandler<AbstractServerConfig>() 
         eventBus.emit(PlayerEvent.JoinEvent(this, name))
     }
 
-    override fun getCommandHelper() = VanillaCommandHelper
+    override val commandHelper = VanillaCommandHelper()
 
-    object VanillaCommandHelper : CommandHelper {
+    open class VanillaCommandHelper : CommandHelper {
 
-        override fun processDataGet(raw: String) = raw.split(":")
-            .toMutableList()
-            .drop(1)
-            .joinToString(separator = ":")
-            .trim()
+        companion object {
+            @JvmStatic
+            val DATA_OWNER_REGEX = """(.*) has the following entity data$""".toRegex(RegexOption.DOT_MATCHES_ALL)
+        }
+
+        override fun processDataGet(raw: String): Pair<String, String> {
+            val split = raw.split(":")
+            val name = DATA_OWNER_REGEX.matchEntire(split.first().trim())?.groupValues[1]?.trim() ?: ""
+            val data = split
+                .toMutableList()
+                .drop(1)
+                .joinToString(separator = ":")
+                .trim()
+            return name to data
+        }
 
     }
 

@@ -7,6 +7,8 @@ import minerslab.mcd.api.config.FeatureConfig
 import minerslab.mcd.api.config.useConfig
 import minerslab.mcd.api.event.PlayerEvent
 import minerslab.mcd.api.event.ServerEvent
+import minerslab.mcd.api.network.web.*
+import minerslab.mcd.event.EmbeddedServerEvent
 import minerslab.mcd.findModule
 import minerslab.mcd.handler.ServerHandler
 import minerslab.mcd.mcDaemon
@@ -29,9 +31,14 @@ class McDaemonApi : McDaemonModule {
 
     override fun start() {
         Commands.reloadDispatcher(ServerCommandDispatcher())
+        mcDaemon.eventBus.addEventListener(::startEmbeddedServer)
         mcDaemon.handler.eventBus.addEventListener(::onServerMessage)
         mcDaemon.handler.eventBus.addEventListener(::onPlayerMessage)
         logger.info("Initialized")
+    }
+
+    private fun startEmbeddedServer(event: EmbeddedServerEvent.StartEvent) = event.application.run {
+        commandAutocomplete()
     }
 
     override fun dispose() {

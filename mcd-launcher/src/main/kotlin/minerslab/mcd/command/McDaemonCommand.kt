@@ -39,7 +39,7 @@ object McDaemonCommand : Consumer<ServerCommandDispatcher> {
             literal("stop") {
                 requires(permission("command.$MC_DAEMON.mcd.stop") or IsServer)
                 run {
-                    source.handler.command(source.handler.getCommandHelper().stop())
+                    source.handler.command(source.handler.commandHelper.stop())
                 }
             }
             literal("perms") {

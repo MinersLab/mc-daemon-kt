@@ -25,7 +25,7 @@ fun ServerCommandSource.command(command: String, mode: CommandExecutingMode = Co
  */
 fun ServerCommandSource.sendFeedback(raw: Wrapped<String>, broadcast: Boolean = false) = handler.run {
     if (!isServer || broadcast) command(
-        handler.getCommandHelper().tellraw(
+        handler.commandHelper.tellraw(
             if (broadcast) "@a" else sender,
             raw.unwrap()
         )

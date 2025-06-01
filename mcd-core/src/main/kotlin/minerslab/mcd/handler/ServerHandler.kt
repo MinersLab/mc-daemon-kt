@@ -45,7 +45,7 @@ interface ServerHandler<T : AbstractServerConfig> {
     /**
      * 获取命令助手
      */
-    fun getCommandHelper(): CommandHelper
+    val commandHelper: CommandHelper
 
     /**
      * 在服务器执行命令

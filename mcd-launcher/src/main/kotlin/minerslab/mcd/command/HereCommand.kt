@@ -61,7 +61,7 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
                 val pos = player.getPosition()
                 val decimalFormat = DecimalFormat("0.00")
                 val text = JsonText(
-                    text().yellow().a(player.name)
+                    text().yellow().a(source.sender)
                         .green().a(" @ ")
                         .gray().a(dimension.toString())
                         .aqua().a(
@@ -78,7 +78,7 @@ object HereCommand : Consumer<ServerCommandDispatcher> {
                 val components = mutableListOf(text)
                 for (map in maps) {
                     components.add(JsonText(" "))
-                    components.add(map(player.name, pos, dimension))
+                    components.add(map(player.getName(), pos, dimension))
                 }
                 source.sendFeedback(components, true)
             }

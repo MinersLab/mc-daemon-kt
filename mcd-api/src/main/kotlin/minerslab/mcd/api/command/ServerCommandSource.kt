@@ -1,7 +1,7 @@
 package minerslab.mcd.api.command
 
 import com.mojang.brigadier.CommandDispatcher
-import minerslab.mcd.api.world.player.ServerPlayer
+import minerslab.mcd.api.world.player.Player
 import minerslab.mcd.handler.ServerHandler
 
 /**
@@ -17,7 +17,7 @@ open class ServerCommandSource(
     /**
      * 获取触发者
      */
-    open fun sender() = ServerPlayer(handler, sender)
+    open fun sender() = Player(handler, sender)
 
 }
 

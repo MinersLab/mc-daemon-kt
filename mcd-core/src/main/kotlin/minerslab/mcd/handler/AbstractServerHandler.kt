@@ -93,7 +93,7 @@ abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T
 
     private fun consoleCommand(command: String) {
         val writer = process.outputWriter(Charset.forName(config.inputCharset))
-        writer.write(getCommandHelper().processCommand(command) + "\n")
+        writer.write(commandHelper.processCommand(command) + "\n")
         writer.flush()
     }
 
@@ -102,7 +102,7 @@ abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T
 
     override fun command(command: String, mode: CommandExecutingMode): String =
         when (mode) {
-            CommandExecutingMode.RCON -> getCommandHelper().processCommand(command).let {
+            CommandExecutingMode.RCON -> commandHelper.processCommand(command).let {
                 val result = rcon?.command(it) ?: command(it, CommandExecutingMode.CONSOLE)
                 logger.debug("[Command] $it -> $result")
                 result
