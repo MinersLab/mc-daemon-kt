@@ -1,8 +1,12 @@
 package minerslab.mcd
 
 import com.typesafe.config.ConfigFactory
+import io.ktor.server.application.install
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.websocket.WebSockets
+import io.ktor.server.websocket.pingPeriod
+import io.ktor.server.websocket.timeout
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.hocon.Hocon
 import kotlinx.serialization.hocon.decodeFromConfig
@@ -19,6 +23,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.createType
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
+import kotlin.time.Duration.Companion.seconds
 
 typealias EmbeddedServerType = EmbeddedServer<NettyApplicationEngine, NettyApplicationEngine.Configuration>
 
@@ -50,6 +55,12 @@ class McDaemon(val args: Array<out String>, val path: Path) {
             )
         }
     ) {
+        install(WebSockets) {
+            pingPeriod = 15.seconds
+            timeout = 15.seconds
+            maxFrameSize = Long.MAX_VALUE
+            masking = false
+        }
         eventBus.emit(EmbeddedServerEvent.StartEvent(embeddedServer, this))
     }
 

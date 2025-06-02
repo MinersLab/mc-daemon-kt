@@ -17,6 +17,8 @@ repositories {
 }
 
 dependencies {
+    implementation("io.ktor:ktor-server-core:3.1.3")
+    implementation("io.ktor:ktor-server-core:3.1.3")
     testImplementation(kotlin("test"))
 
     api(libs.kotlinx.serialization.json)
@@ -28,6 +30,7 @@ dependencies {
 
     api(libs.ktor.server.netty)
     api(libs.ktor.server.core)
+    api(libs.ktor.server.websockets)
 
     api(libs.logback.classic)
 }
