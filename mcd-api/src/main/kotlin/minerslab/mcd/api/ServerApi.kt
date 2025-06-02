@@ -35,7 +35,7 @@ fun ServerCommandSource.sendFeedback(raw: Wrapped<String>, broadcast: Boolean = 
         val ansi = ANSIComponentSerializer.ansi().serialize(json)
         val legacy = LegacyComponentSerializer.legacySection().deserialize(ansi)
         val colored = ANSIComponentSerializer.ansi().serialize(legacy)
-        println(colored)
+        handler.output(colored)
     }
 }
 

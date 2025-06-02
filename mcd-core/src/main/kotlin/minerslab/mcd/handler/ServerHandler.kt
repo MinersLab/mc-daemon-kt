@@ -1,6 +1,7 @@
 package minerslab.mcd.handler
 
 import kotlinx.serialization.Serializable
+import minerslab.mcd.event.HandlerEvent
 import minerslab.mcd.handler.helper.CommandHelper
 import org.slf4j.Logger
 import starry.adventure.core.event.EventBus
@@ -51,5 +52,15 @@ interface ServerHandler<T : AbstractServerConfig> {
      * 在服务器执行命令
      */
     fun command(command: String, mode: CommandExecutingMode = CommandExecutingMode.RCON): String
+
+    /**
+     * 向服务器发送命令
+     */
+    fun send(command: String, mode: CommandExecutingMode = CommandExecutingMode.RCON)
+
+    fun output(message: String) {
+        eventBus.emit(HandlerEvent.OutputEvent(this, message))
+        println(message)
+    }
 
 }

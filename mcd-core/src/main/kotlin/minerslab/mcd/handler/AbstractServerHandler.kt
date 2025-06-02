@@ -60,7 +60,7 @@ abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T
         val reader = process.inputStream.bufferedReader(Charset.forName(config.outputCharset))
         while (process.isAlive) {
             val line = reader.readLine() ?: break
-            println(line) // 重定向到控制台
+            output(line) // 重定向到控制台
             tickOutput(line)
         }
         reader.close()
@@ -97,7 +97,6 @@ abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T
         writer.flush()
     }
 
-
     abstract fun parseConsoleCommandFeedback(line: String): String
 
     override fun command(command: String, mode: CommandExecutingMode): String =
@@ -108,10 +107,22 @@ abstract class AbstractServerHandler<T : AbstractServerConfig> : ServerHandler<T
                 result
             }
             CommandExecutingMode.CONSOLE -> consoleCommand(command).let {
-                command(command)
+                consoleCommand(command)
                 val reader = process.inputStream.bufferedReader()
-                return parseConsoleCommandFeedback(reader.readLine().also(::println))
+                return parseConsoleCommandFeedback(reader.readLine().also(::output))
             }
         }
+
+    override fun send(command: String, mode: CommandExecutingMode) {
+        when (mode) {
+            CommandExecutingMode.RCON -> commandHelper.processCommand(command).let {
+                rcon?.command(it) ?: send(it, CommandExecutingMode.CONSOLE)
+                logger.debug("[Command] $it")
+            }
+            CommandExecutingMode.CONSOLE -> consoleCommand(command).let {
+                consoleCommand(command)
+            }
+        }
+    }
 
 }
