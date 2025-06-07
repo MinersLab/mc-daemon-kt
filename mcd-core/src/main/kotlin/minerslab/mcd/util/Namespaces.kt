@@ -1,7 +1,7 @@
 package minerslab.mcd.util
 
-import starry.adventure.core.registry.identifierOf
-import starry.adventure.core.registry.Identifier
+import starry.adventure.registry.identifierOf
+import starry.adventure.registry.Identifier
 
 /**
  * 命名空间

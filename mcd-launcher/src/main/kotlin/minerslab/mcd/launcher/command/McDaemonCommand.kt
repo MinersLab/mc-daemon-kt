@@ -26,7 +26,7 @@ import minerslab.mcd.util.Namespaces.MC_DAEMON
 import minerslab.mcd.util.Namespaces.mcDaemon
 import starry.adventure.brigadier.command.argument
 import starry.adventure.brigadier.dispatcher.register
-import starry.adventure.core.registry.Identifier
+import starry.adventure.registry.Identifier
 import java.util.function.Consumer
 import kotlin.io.path.div
 

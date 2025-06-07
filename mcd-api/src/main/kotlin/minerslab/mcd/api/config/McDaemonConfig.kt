@@ -4,8 +4,8 @@ import kotlinx.serialization.*
 import kotlinx.serialization.json.Json
 import minerslab.mcd.mcDaemon
 import minerslab.mcd.plugin.PluginLoadingContext
-import starry.adventure.core.registry.Identifier
-import starry.adventure.core.registry.identifierOf
+import starry.adventure.registry.Identifier
+import starry.adventure.registry.identifierOf
 import java.io.File
 import kotlin.io.path.div
 import kotlin.reflect.KClass

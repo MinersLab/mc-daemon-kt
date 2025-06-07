@@ -10,7 +10,7 @@ import minerslab.mcd.api.text.text
 import minerslab.mcd.launcher.registry.Features
 import minerslab.mcd.util.Namespaces.MINECRAFT
 import starry.adventure.brigadier.dispatcher.register
-import starry.adventure.core.registry.Identifier
+import starry.adventure.registry.Identifier
 import java.text.DecimalFormat
 import java.util.function.Consumer
 

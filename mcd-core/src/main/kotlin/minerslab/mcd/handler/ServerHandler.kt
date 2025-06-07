@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 import minerslab.mcd.event.HandlerEvent
 import minerslab.mcd.handler.helper.CommandHelper
 import org.slf4j.Logger
-import starry.adventure.core.event.EventBus
+import starry.adventure.event.EventBus
 import kotlin.reflect.KClass
 
 /**

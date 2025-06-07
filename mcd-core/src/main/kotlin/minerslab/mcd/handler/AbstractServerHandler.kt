@@ -5,7 +5,7 @@ import minerslab.mcd.mcDaemon
 import org.glavo.rcon.Rcon
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import starry.adventure.core.event.EventBus
+import starry.adventure.event.EventBus
 import java.nio.charset.Charset
 import java.util.*
 import kotlin.io.path.div

@@ -1,7 +1,7 @@
 package minerslab.mcd.event
 
 import minerslab.mcd.handler.ServerHandler
-import starry.adventure.core.event.Event
+import starry.adventure.event.Event
 
 sealed class HandlerEvent(val handler: ServerHandler<*>) : Event() {
 

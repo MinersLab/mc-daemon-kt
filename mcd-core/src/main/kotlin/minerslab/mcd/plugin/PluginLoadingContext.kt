@@ -1,6 +1,6 @@
 package minerslab.mcd.plugin
 
-import starry.adventure.core.event.EventBus
+import starry.adventure.event.EventBus
 
 class PluginLoadingContext(val pluginClassLoader: PluginClassLoader) {
 

@@ -2,7 +2,7 @@ package minerslab.mcd.event
 
 import io.ktor.server.application.Application
 import minerslab.mcd.EmbeddedServerType
-import starry.adventure.core.event.Event
+import starry.adventure.event.Event
 
 sealed class EmbeddedServerEvent(val embeddedServer: EmbeddedServerType) : Event() {
 

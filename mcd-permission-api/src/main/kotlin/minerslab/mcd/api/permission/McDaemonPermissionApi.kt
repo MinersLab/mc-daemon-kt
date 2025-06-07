@@ -6,7 +6,7 @@ import minerslab.mcd.api.config.useConfig
 import minerslab.mcd.findModule
 import minerslab.mcd.mcDaemon
 import minerslab.mcd.util.Namespaces.MC_DAEMON
-import starry.adventure.core.registry.Identifiers.div
+import starry.adventure.registry.Identifiers.div
 
 class McDaemonPermissionApi : McDaemonModule {
 

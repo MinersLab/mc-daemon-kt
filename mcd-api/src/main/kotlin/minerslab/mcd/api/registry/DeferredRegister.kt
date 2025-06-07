@@ -1,9 +1,9 @@
 package minerslab.mcd.api.registry
 
 import minerslab.mcd.plugin.PluginLoadingContext
-import starry.adventure.core.registry.IRegistry
-import starry.adventure.core.registry.Identifier
-import starry.adventure.core.registry.ResourceKey
+import starry.adventure.registry.IRegistry
+import starry.adventure.registry.Identifier
+import starry.adventure.registry.ResourceKey
 
 /**
  * 插件注册表注册入口

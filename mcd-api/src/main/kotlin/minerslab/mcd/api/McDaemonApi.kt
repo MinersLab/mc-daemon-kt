@@ -16,7 +16,7 @@ import minerslab.mcd.util.Namespaces.MC_DAEMON
 import minerslab.mcd.util.addEventListener
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import starry.adventure.core.registry.Identifiers.div
+import starry.adventure.registry.Identifiers.div
 
 class McDaemonApi : McDaemonModule {
 

@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.1.21"
-adventure-kt = "1c76216a08"
+adventure-kt = "2d4b23fbfc"
 adventure = "4.21.0"
 kotlinx-serialization = "1.8.1"
 kotlinx-coroutines = "1.10.2"
@@ -29,6 +29,8 @@ adventure-text-minimessage = { module = "net.kyori:adventure-text-minimessage", 
 adventure-text-json-gson = { module = "net.kyori:adventure-text-serializer-gson", version.ref = "adventure" }
 adventure-parser = { group = "com.github.StarryDevs.adventure-kt", name = "parser", version.ref = "adventure-kt" }
 adventure-brigadier = { group = "com.github.StarryDevs.adventure-kt", name = "brigadier", version.ref = "adventure-kt" }
+adventure-event = { group = "com.github.StarryDevs.adventure-kt", name = "event", version.ref = "adventure-kt" }
+adventure-registry = { group = "com.github.StarryDevs.adventure-kt", name = "registry", version.ref = "adventure-kt" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json",version.ref = "kotlinx-serialization" }
 kotlinx-serialization-hocon = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-hocon",version.ref = "kotlinx-serialization" }
 kotlinx-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }

@@ -15,7 +15,7 @@ import minerslab.mcd.api.McDaemonModule
 import minerslab.mcd.event.EmbeddedServerEvent
 import minerslab.mcd.handler.ServerHandler
 import minerslab.mcd.plugin.PluginManager
-import starry.adventure.core.event.EventBus
+import starry.adventure.event.EventBus
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.div

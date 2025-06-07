@@ -6,7 +6,7 @@ import minerslab.mcd.api.config.FeatureConfig
 import minerslab.mcd.api.config.isFutureEnabled
 import minerslab.mcd.api.instance
 import minerslab.mcd.api.registry.Registries
-import starry.adventure.core.registry.Identifier
+import starry.adventure.registry.Identifier
 
 /**
  * 特性数据类

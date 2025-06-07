@@ -1,8 +1,8 @@
 package minerslab.mcd.util
 
-import starry.adventure.core.event.Event
-import starry.adventure.core.event.EventBus
-import starry.adventure.core.event.WrappedEvent
+import starry.adventure.event.Event
+import starry.adventure.event.EventBus
+import starry.adventure.event.WrappedEvent
 
 /**
  * 添加事件监听器

@@ -26,6 +26,8 @@ dependencies {
     api(libs.kotlinx.coroutines)
 
     api(libs.adventure.parser)
+    api(libs.adventure.registry)
+    api(libs.adventure.event)
     api(libs.minecraft.rcon)
 
     api(libs.ktor.server.netty)

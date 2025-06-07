@@ -2,7 +2,7 @@ package minerslab.mcd.api.registry
 
 import minerslab.mcd.api.data.Feature
 import minerslab.mcd.util.Namespaces.MC_DAEMON
-import starry.adventure.core.registry.*
+import starry.adventure.registry.*
 
 /**
  * 注册表
