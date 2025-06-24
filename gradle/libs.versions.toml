@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.1.21"
+kotlin = "2.2.0"
 adventure-kt = "2d4b23fbfc"
 adventure = "4.23.0"
 kotlinx-serialization = "1.8.1"
