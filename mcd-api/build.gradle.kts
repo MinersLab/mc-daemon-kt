@@ -20,6 +20,7 @@ dependencies {
     api(libs.adventure.brigadier)
     api(libs.adventure.nbt)
     api(libs.adventure.api)
+    api(libs.adventure.registry)
     api(libs.adventure.extra.kotlin)
     api(libs.adventure.text.plain)
     api(libs.adventure.text.ansi)

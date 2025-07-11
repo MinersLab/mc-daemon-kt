@@ -96,7 +96,8 @@ class McDaemon(val args: Array<out String>, val path: Path) {
         pluginManager.construct()
         pluginManager.load()
         initHandler()
-        if (config.server.enabled) embeddedServer.start(true)
+        if (config.server.enabled)
+            embeddedServer.start(true)
     }
 
     var isStopped = false

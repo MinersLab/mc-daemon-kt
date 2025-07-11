@@ -108,7 +108,11 @@ class PluginManager(daemon: McDaemon) {
     }
 
     fun dispose() {
-        plugins.keys.forEach(::dispose)
+        plugins.keys.forEach {
+            runCatching {
+                dispose(it)
+            }
+        }
     }
 
     fun getPluginByFile(file: File) = plugins.entries.firstOrNull { it.value.file == file }

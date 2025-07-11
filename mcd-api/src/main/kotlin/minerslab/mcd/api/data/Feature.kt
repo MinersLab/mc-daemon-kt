@@ -40,8 +40,12 @@ fun feature(name: Identifier) = requirement {
  * @param feature 特性
  */
 fun feature(feature: Feature) = requirement {
+    feature(feature) { it }
+}
+
+fun <T> feature(feature: Feature, block: (Boolean) -> T): T {
     val name = feature.toString()
         .takeUnless(String::isEmpty)
-        ?: return@requirement feature.defaultEnabled
-    McDaemonApi.instance.features.isFutureEnabled(name, feature.defaultEnabled)
+    val isEnabled = name != null && McDaemonApi.instance.features.isFutureEnabled(name, feature.defaultEnabled)
+    return block(isEnabled)
 }
