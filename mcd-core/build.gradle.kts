@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core:3.2.2")
-    implementation("io.ktor:ktor-server-core:3.2.2")
+    implementation("io.ktor:ktor-server-core:3.3.1")
+    implementation("io.ktor:ktor-server-core:3.3.1")
     testImplementation(kotlin("test"))
 
     api(libs.kotlinx.serialization.json)
